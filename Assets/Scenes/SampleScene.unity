@@ -131,6 +131,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Areia
       objectReference: {fileID: 0}
+    - target: {fileID: 2907826765171654626, guid: fd35aeb3fb78d574795ea0240f3547db, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 5623378503983165432, guid: fd35aeb3fb78d574795ea0240f3547db, type: 3}
       propertyPath: m_LocalPosition.x
       value: 7.54481
@@ -171,6 +175,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6446185513927578951, guid: fd35aeb3fb78d574795ea0240f3547db, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
