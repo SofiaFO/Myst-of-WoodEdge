@@ -47,5 +47,11 @@ TagManager:
   - name: Decoracao
     uniqueID: 624826819
     locked: 0
+  - name: Jogador
+    uniqueID: 284833715
+    locked: 0
+  - name: Arvore
+    uniqueID: 2086958999
+    locked: 0
   m_RenderingLayers:
   - Default
