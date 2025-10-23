@@ -32,12 +32,4 @@ public class Attack : MonoBehaviour
         // destr�i o proj�til
         Destroy(gameObject);
     }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Enemy"))
-        {
-            Destroy(gameObject);
-        }
-    }
 }
