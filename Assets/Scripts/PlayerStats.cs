@@ -37,7 +37,7 @@ public class PlayerStats : MonoBehaviour
     // === VIDA ===
     public void TakeDamage(float damage)
     {
-        float realDamage = Mathf.Max(1f, damage - defense); // reduz dano pela defesa
+        float realDamage = damage - (defense * damage /100); // reduz dano pela defesa
         currentHealth -= realDamage;
         UpdateUI();
 

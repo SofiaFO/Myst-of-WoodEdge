@@ -44,17 +44,17 @@ public class PlayerController : MonoBehaviour
         _anim.SetBool("isWalking", false);
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
+    void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Enemy"))
         {
-            TakeDamage(10);
+            TakeDamage(0.5f);
         }
     }
 
     public void TakeDamage(float damage)
     {
-        if (damaging || _isDead) return; // não recebe dano se estiver invencível ou morto
+        if (_isDead) return; // não recebe dano se estiver invencível ou morto
 
         damaging = true;                // começa invencibilidade temporária
         _playerStats.TakeDamage(damage); // aplica dano
