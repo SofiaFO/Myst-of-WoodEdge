@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -5989419224424164028}
   m_Layer: 0
   m_Name: AttackEffect 1
-  m_TagString: Untagged
+  m_TagString: Attack
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -74,8 +74,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45026f8e0eed47f4b9edf5eec861fb11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Attack
-  xSpeed: 5
-  moveTime: 3.5
+  xSpeed: 4
+  moveTime: 1
 --- !u!1 &1929186318983864646
 GameObject:
   m_ObjectHideFlags: 0

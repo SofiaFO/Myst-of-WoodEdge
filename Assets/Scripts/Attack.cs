@@ -4,7 +4,7 @@ using System.Collections;
 public class Attack : MonoBehaviour
 {
     [SerializeField] float xSpeed = 5f;
-    [SerializeField] float moveTime = 5f; // tempo que se move antes de parar
+    [SerializeField] float moveTime = 1.5f; // tempo que se move antes de parar
 
     Rigidbody2D _rb;
 
@@ -33,8 +33,11 @@ public class Attack : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        Destroy(gameObject);
+        if (collision.CompareTag("Enemy"))
+        {
+            Destroy(gameObject);
+        }
     }
 }

@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
 {
    
     PlayerStats _stats;
-    [SerializeField] float moveSpeed = 5f;
+    [SerializeField] float moveSpeed;
     [SerializeField] GameObject attackPrefab1;
     [SerializeField] GameObject attackPrefab2;
     Rigidbody2D _rb;
@@ -16,16 +16,14 @@ public class PlayerController : MonoBehaviour
     float yDir;
     bool isRunning = false;
     Vector2 _moveInput;
-    float healthBar;
-    float maxHealth;
-    float _currentHealth;
+    [SerializeField] Slider healthBar;
+    float maxHealth = 100f;
+    float currentHealth;
     [SerializeField] AudioClip deathClip;
     Animator _anim;
 
-    [SerializeField] float attackRate = 0.6f;     // segundos entre ataques
-    [SerializeField] float attackDamage = 20f;
-    [SerializeField] float attackRange = 0.6f;    // raio do círculo de ataque
-    [SerializeField] float attackOffset = 0.75f;  // distância do ponto de ataque em relação ao jogador
+    [SerializeField] float attackRate;     // segundos entre ataques
+    [SerializeField] float attackDamage;
     [SerializeField] LayerMask enemyLayer;        // layer(s) que serão considerados inimigos
     [SerializeField] Transform attackPoint;      // referência opcional para posicionar o ponto de ataque
     [SerializeField] AudioClip attackClip;
@@ -45,8 +43,49 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         _anim.SetBool("isWalking", false);
-        _currentHealth = maxHealth;
-        if (healthBar != null) healthBar = _currentHealth / maxHealth;
+        currentHealth = maxHealth;
+        healthBar.value = 100f;
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy"))
+        {
+            TakeDamage(20f);
+            if (currentHealth <= 0)
+            {
+                yDir = 0;
+                xDir = 0;
+                moveSpeed = 0;
+                GetComponentInChildren<Collider2D>().enabled = false;
+                _isDead = true;
+                AudioSource.PlayClipAtPoint(deathClip, transform.position);
+                _anim.SetTrigger("Destroy");
+                StartCoroutine(LoadSceneAfterDelay());
+            }
+        }
+    }
+
+    void TakeDamage(float damage)
+    {
+        currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        // Atualiza o Slider (normalizado)
+        healthBar.value = currentHealth / maxHealth;
+
+        // Se a vida acabar → Game Over
+        if (currentHealth <= 0)
+        {
+            yDir = 0;
+            xDir = 0;
+            moveSpeed = 0;
+            GetComponentInChildren<Collider2D>().enabled = false;
+            _isDead = true;
+            AudioSource.PlayClipAtPoint(deathClip, transform.position);
+            _anim.SetTrigger("Destroy");
+            StartCoroutine(LoadSceneAfterDelay());
+        }
     }
 
     void Update()
@@ -58,6 +97,12 @@ public class PlayerController : MonoBehaviour
     {
         if (_isDead) return;
         Movimentar();
+    }
+
+    System.Collections.IEnumerator LoadSceneAfterDelay()
+    {
+        yield return new WaitForSeconds(2f); // espera o tempo definido
+        SceneManager.LoadScene("GameOver");     // carrega a cena
     }
 
     void Movimentar()
