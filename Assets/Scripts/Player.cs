@@ -15,18 +15,17 @@ public class PlayerController : MonoBehaviour
     float xDir;
     float yDir;
     bool isRunning = false;
+    bool damaging = false;
     Vector2 _moveInput;
-    [SerializeField] Slider healthBar;
-    float maxHealth = 100f;
-    float currentHealth;
     [SerializeField] AudioClip deathClip;
     Animator _anim;
 
     [SerializeField] float attackRate;     // segundos entre ataques
-    [SerializeField] float attackDamage;
+    [SerializeField] public float attackDamage;
     [SerializeField] LayerMask enemyLayer;        // layer(s) que serão considerados inimigos
     [SerializeField] Transform attackPoint;      // referência opcional para posicionar o ponto de ataque
     [SerializeField] AudioClip attackClip;
+    private PlayerStats _playerStats;
     float _lastAttackTime = -99f;
 
     bool _isDead = false;
@@ -36,56 +35,53 @@ public class PlayerController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _anim = GetComponentInChildren<Animator>();
         _stats = GetComponentInChildren<PlayerStats>();
+        _playerStats = GetComponent<PlayerStats>();
 
-        
     }
 
     void Start()
     {
         _anim.SetBool("isWalking", false);
-        currentHealth = maxHealth;
-        healthBar.value = 100f;
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Enemy"))
         {
-            TakeDamage(20f);
-            if (currentHealth <= 0)
-            {
-                yDir = 0;
-                xDir = 0;
-                moveSpeed = 0;
-                GetComponentInChildren<Collider2D>().enabled = false;
-                _isDead = true;
-                AudioSource.PlayClipAtPoint(deathClip, transform.position);
-                _anim.SetTrigger("Destroy");
-                StartCoroutine(LoadSceneAfterDelay());
-            }
+            TakeDamage(10);
         }
     }
 
-    void TakeDamage(float damage)
+    public void TakeDamage(float damage)
     {
-        currentHealth -= damage;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        if (damaging || _isDead) return; // não recebe dano se estiver invencível ou morto
 
-        // Atualiza o Slider (normalizado)
-        healthBar.value = currentHealth / maxHealth;
+        damaging = true;                // começa invencibilidade temporária
+        _playerStats.TakeDamage(damage); // aplica dano
+        _anim.SetBool("Damage", true);   // inicia animação de dano
 
-        // Se a vida acabar → Game Over
-        if (currentHealth <= 0)
+        if (_playerStats.CurrentHealth <= 0)
         {
-            yDir = 0;
             xDir = 0;
+            yDir = 0;
             moveSpeed = 0;
             GetComponentInChildren<Collider2D>().enabled = false;
             _isDead = true;
             AudioSource.PlayClipAtPoint(deathClip, transform.position);
             _anim.SetTrigger("Destroy");
             StartCoroutine(LoadSceneAfterDelay());
+            return;
         }
+
+        // inicia coroutine para resetar o dano depois da animação
+        StartCoroutine(EndDamageAfterDelay(0.6f)); // 0.6 = duração da animação de dano
+    }
+
+    private IEnumerator EndDamageAfterDelay(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        damaging = false;
+        _anim.SetBool("Damage", false);
     }
 
     void Update()
@@ -135,6 +131,12 @@ public class PlayerController : MonoBehaviour
         {
             TryAttack();
         }
+    }
+
+    public void ResetDamage()
+    {
+        _anim.SetBool("Damage", false);
+        damaging = false;
     }
 
     void TryAttack()

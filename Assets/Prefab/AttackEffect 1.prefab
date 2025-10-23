@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8246679215049275124}
   - component: {fileID: 3444941784229966547}
   - component: {fileID: -5989419224424164028}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: AttackEffect 1
   m_TagString: Attack
   m_Icon: {fileID: 0}
@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 4046420066903741345}
   - component: {fileID: 2304574569586845044}
   - component: {fileID: 7246933497360761590}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -199,9 +199,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2173470792708284394}
   - component: {fileID: 3911226937467712293}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: Attack
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -251,7 +251,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0

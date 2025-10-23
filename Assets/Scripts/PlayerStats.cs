@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class PlayerStats : MonoBehaviour
 {
     [Header("Status Base")]
-    [SerializeField] private float maxHealth = 100f;
+    [SerializeField] private float maxHealth = 100;
     [SerializeField] private float attack = 20f;
     [SerializeField] private float defense = 5f;
     [SerializeField] private int level = 1;
@@ -39,22 +39,14 @@ public class PlayerStats : MonoBehaviour
     {
         float realDamage = Mathf.Max(1f, damage - defense); // reduz dano pela defesa
         currentHealth -= realDamage;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         UpdateUI();
 
-        if (currentHealth <= 0)
-            Die();
     }
 
     public void Heal(float amount)
     {
         currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
         UpdateUI();
-    }
-
-    private void Die()
-    {
-        OnDeath?.Invoke();
     }
 
     // === ATAQUE / DEFESA ===
@@ -141,6 +133,7 @@ public class PlayerStats : MonoBehaviour
     // getters simples para outros scripts
     public float CurrentHealth => currentHealth;
     public float MaxHealth => maxHealth;
+    public float defenseValue => defense;
     public int Level => level;
     public int Money => money;
 }

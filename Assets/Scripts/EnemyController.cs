@@ -9,7 +9,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float maxHealth = 50f;
     [SerializeField] private float attack = 10f;
     [SerializeField] private float defense = 2f;
-    [SerializeField] private float moveSpeed = 2f;
+    [SerializeField] private float moveSpeed = 1f;
     [SerializeField] private float attackRange = 1.0f;
     [SerializeField] private float attackRate = 1.5f;
     [SerializeField] private float xpDrop = 25f;
@@ -31,7 +31,7 @@ public class EnemyController : MonoBehaviour
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
-        _anim = GetComponent<Animator>();
+        _anim = GetComponentInChildren<Animator>();
     }
 
     private void Start()
@@ -60,14 +60,6 @@ public class EnemyController : MonoBehaviour
         {
             TryAttack();
         }
-
-        UpdateAnimation();
-    }
-
-    private void FollowPlayer()
-    {
-        Vector2 direction = (_player.position - transform.position).normalized;
-        _rb.linearVelocity = direction * moveSpeed;
     }
 
     private void TryAttack()
@@ -77,14 +69,31 @@ public class EnemyController : MonoBehaviour
         if (Time.time - lastAttackTime < attackRate) return;
 
         lastAttackTime = Time.time;
-        if (_anim != null) _anim.SetTrigger("Attack");
         if (attackClip != null) AudioSource.PlayClipAtPoint(attackClip, transform.position);
 
         // verifica se o player ainda está dentro do alcance
         float distance = Vector2.Distance(transform.position, _player.position);
-        if (distance <= attackRange + 0.2f && _playerStats != null)
+        if (distance <= attackRange + 0.2f && _player != null)
         {
-            _playerStats.TakeDamage(attack);
+            _anim.SetBool("IsAttacking", true);
+        }
+    }
+
+    private bool isKnockback = false;
+    private float knockbackDuration = 0.2f; // quanto tempo dura o knockback
+
+    private void FollowPlayer()
+    {
+        if (_isDead || isKnockback) return; // se estiver em knockback, não move
+
+        Vector2 direction = (_player.position - transform.position).normalized;
+        _rb.linearVelocity = direction * moveSpeed;
+
+        if (direction.x != 0)
+        {
+            SpriteRenderer sr = GetComponent<SpriteRenderer>();
+            if (sr != null)
+                sr.flipX = direction.x < 0;
         }
     }
 
@@ -95,18 +104,47 @@ public class EnemyController : MonoBehaviour
         float realDamage = Mathf.Max(1f, damage - defense);
         currentHealth -= realDamage;
 
+        if (_anim != null)
+            _anim.SetBool("IsDamage", true);
+
+        // Aplica knockback
+        Vector2 knockDir = (transform.position - _player.position).normalized;
+        float knockForce = 5f;
+
+        StartCoroutine(DoKnockback(knockDir, knockForce));
+
         if (currentHealth <= 0)
         {
             Die();
         }
     }
 
+    private IEnumerator DoKnockback(Vector2 direction, float force)
+    {
+        isKnockback = true;
+        _rb.linearVelocity = Vector2.zero;
+        _rb.AddForce(direction * force, ForceMode2D.Impulse);
+        yield return new WaitForSeconds(knockbackDuration);
+        isKnockback = false;
+    }
+
+
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Attack") && _playerStats != null)
+        {
+            TakeDamage(_playerStats.GetAttack());
+        }
+    }
+
+
     private void Die()
     {
         _isDead = true;
         _rb.linearVelocity = Vector2.zero;
 
-        if (_anim != null) _anim.SetTrigger("Die");
+        if (_anim != null) _anim.SetTrigger("Destroy");
         if (deathClip != null) AudioSource.PlayClipAtPoint(deathClip, transform.position);
 
         // desativa colisores para não interferir após a morte
@@ -129,24 +167,9 @@ public class EnemyController : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void UpdateAnimation()
-    {
-        if (_anim == null) return;
-
-        Vector2 vel = _rb.linearVelocity;
-        _anim.SetFloat("Speed", vel.magnitude);
-        _anim.SetFloat("MoveX", vel.x);
-        _anim.SetFloat("MoveY", vel.y);
-    }
-
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
-
-    // --- Getters para diferenciação e debug ---
-    public float GetAttack() => attack;
-    public float GetDefense() => defense;
-    public float GetHealth() => currentHealth;
 }
