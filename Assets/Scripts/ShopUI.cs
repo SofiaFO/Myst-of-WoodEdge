@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+<<<<<<< HEAD
 
 [System.Serializable]
 public class ShopItem
@@ -14,11 +15,15 @@ public class ShopItem
     public enum ItemType { Vida, Ataque, Defesa }
     public ItemType type;
 }
+=======
+using UnityEngine.SceneManagement;
+>>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197
 
 public class ShopUI : MonoBehaviour
 {
     [SerializeField] private ShopItem[] items;
     [SerializeField] private PlayerStats playerStats;
+<<<<<<< HEAD
 
     private void Start()
     {
@@ -35,6 +40,44 @@ public class ShopUI : MonoBehaviour
 
     void TryBuyItem(ShopItem item)
     {
+=======
+    [SerializeField] private Button backButton; 
+
+
+    private void Start()
+    {
+        foreach (var item in items)
+        {
+            item.buyButton.onClick.AddListener(() => TryBuyItem(item));
+        }
+
+        if (backButton != null)
+            backButton.onClick.AddListener(ReturnToPreviousScene);
+    }
+
+    private void TryBuyItem(ShopItem item)
+    {
+        if (item == null)
+        {
+            Debug.LogError("❌ item está nulo!");
+            return;
+        }
+
+        if (GameManager.Instance == null)
+        {
+            Debug.LogError("❌ GameManager.Instance está nulo!");
+            return;
+        }
+
+        if (playerStats == null)
+        {
+            Debug.LogError("❌ playerStats está nulo!");
+            return;
+        }
+
+        Debug.Log($"Tentando comprar: {item.itemName}");
+    
+>>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197
         bool success = GameManager.Instance.SpendCoins(item.price);
 
         if (success)
@@ -52,6 +95,7 @@ public class ShopUI : MonoBehaviour
                     break;
             }
 
+<<<<<<< HEAD
             Debug.Log($"🛍️ Comprou {item.itemName}!");
         }
         else
@@ -60,3 +104,18 @@ public class ShopUI : MonoBehaviour
         }
     }
 }
+=======
+            Debug.Log($"Comprou {item.itemName}!");
+        }
+        else
+        {
+            Debug.Log("Moedas insuficientes!");
+        }
+    }
+    
+    private void ReturnToPreviousScene()
+    {
+        SceneManager.LoadScene("MainMenu"); 
+    }
+}
+>>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197

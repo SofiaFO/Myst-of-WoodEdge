@@ -10,13 +10,21 @@ using UnityEngine.UI;
 public class PlayerStats : MonoBehaviour
 {
     [Header("Status Base")]
+<<<<<<< HEAD
     [SerializeField] private float maxHealth = 100f;
+=======
+    [SerializeField] private float maxHealth = 100;
+>>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197
     [SerializeField] private float attack = 20f;
     [SerializeField] private float defense = 5f;
     [SerializeField] private int level = 1;
     [SerializeField] private float currentXP = 0f;
     [SerializeField] private float xpToNextLevel = 100f;
     [SerializeField] private int money = 0;
+<<<<<<< HEAD
+=======
+    [SerializeField] private float moneyMultiplier = 1f;
+>>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197
 
     private float currentHealth;
 
@@ -28,6 +36,22 @@ public class PlayerStats : MonoBehaviour
 
     public event Action OnDeath; // para PlayerController reagir quando morrer
 
+<<<<<<< HEAD
+=======
+    private void Awake()
+    {
+        PlayerStats[] players = FindObjectsOfType<PlayerStats>();
+        if (players.Length > 1)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        DontDestroyOnLoad(gameObject);
+    }
+
+    
+>>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197
     void Start()
     {
         currentHealth = maxHealth;
@@ -37,6 +61,7 @@ public class PlayerStats : MonoBehaviour
     // === VIDA ===
     public void TakeDamage(float damage)
     {
+<<<<<<< HEAD
         float realDamage = Mathf.Max(1f, damage - defense); // reduz dano pela defesa
         currentHealth -= realDamage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
@@ -44,6 +69,12 @@ public class PlayerStats : MonoBehaviour
 
         if (currentHealth <= 0)
             Die();
+=======
+        float realDamage = damage - (defense * damage /100); // reduz dano pela defesa
+        currentHealth -= realDamage;
+        UpdateUI();
+
+>>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197
     }
 
     public void Heal(float amount)
@@ -52,11 +83,14 @@ public class PlayerStats : MonoBehaviour
         UpdateUI();
     }
 
+<<<<<<< HEAD
     private void Die()
     {
         OnDeath?.Invoke();
     }
 
+=======
+>>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197
     // === ATAQUE / DEFESA ===
     public float GetAttack()
     {
@@ -67,6 +101,15 @@ public class PlayerStats : MonoBehaviour
     {
         return defense;
     }
+<<<<<<< HEAD
+=======
+    
+    public void IncreaseHealth(float amount)
+    {
+        maxHealth += amount;
+        currentHealth = maxHealth;
+    }
+>>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197
 
     public void IncreaseAttack(float amount)
     {
@@ -141,6 +184,10 @@ public class PlayerStats : MonoBehaviour
     // getters simples para outros scripts
     public float CurrentHealth => currentHealth;
     public float MaxHealth => maxHealth;
+<<<<<<< HEAD
+=======
+    public float defenseValue => defense;
+>>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197
     public int Level => level;
     public int Money => money;
 }

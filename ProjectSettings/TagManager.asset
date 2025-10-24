@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Enemy
+  - Attack
   layers:
   - Default
   - TransparentFX
@@ -11,7 +13,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Combat
   - 
   - 
   - 
@@ -47,5 +49,13 @@ TagManager:
   - name: Decoracao
     uniqueID: 624826819
     locked: 0
+  - name: Player
+    uniqueID: 221191801
+    locked: 0
+  - name: Enemy
+    uniqueID: 163158239
+    locked: 0  
+  - name: Arvore
+    uniqueID: 2086958999
   m_RenderingLayers:
   - Default
