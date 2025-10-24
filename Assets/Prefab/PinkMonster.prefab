@@ -125,6 +125,7 @@ GameObject:
   - component: {fileID: 6398225130331625622}
   - component: {fileID: 6171051653344566175}
   - component: {fileID: 4507880151396603032}
+  - component: {fileID: 6627355953806166753}
   m_Layer: 0
   m_Name: PinkMonster
   m_TagString: Player
@@ -173,6 +174,8 @@ MonoBehaviour:
     m_Bits: 0
   attackPoint: {fileID: 8529761014988169515}
   attackClip: {fileID: 8300000, guid: 5208ff2f92c85a946be7ebe9939618aa, type: 3}
+  damageInterval: 0.5
+  contactDamage: 0.5
 --- !u!50 &4243004328109131806
 Rigidbody2D:
   serializedVersion: 5
@@ -199,7 +202,7 @@ Rigidbody2D:
   m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &6398225130331625622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -289,6 +292,43 @@ CapsuleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: -0.0022022724, y: -0.013720915}
   m_Size: {x: 0.16083837, y: 0.29433975}
+  m_Direction: 0
+--- !u!70 &6627355953806166753
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3337100502254712654}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: -0.0003851652, y: -0.013975784}
+  m_Size: {x: 0.16514206, y: 0.29552087}
   m_Direction: 0
 --- !u!1 &4160069220121758628
 GameObject:

@@ -11,8 +11,6 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float moveSpeed = 1f;
     [SerializeField] private float attackRange = 0.5f;
     [SerializeField] private float attackRate = 1.5f;
-    [SerializeField] private float xpDrop;
-    [SerializeField] private int moneyDrop;
 
     private float currentHealth;
     private float lastAttackTime = 0f;

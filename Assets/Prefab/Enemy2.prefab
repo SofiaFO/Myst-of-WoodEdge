@@ -125,6 +125,7 @@ GameObject:
   - component: {fileID: 4831802915019022334}
   - component: {fileID: 5683587962034970537}
   - component: {fileID: 5000109822456322585}
+  - component: {fileID: 8376609052487696}
   m_Layer: 6
   m_Name: Enemy2
   m_TagString: Enemy
@@ -193,10 +194,10 @@ MonoBehaviour:
   moveSpeed: 1
   attackRange: 0.5
   attackRate: 1.5
-  xpDrop: 25
-  moneyDrop: 10
-  xpPrefab: {fileID: 0}
-  moneyPrefab: []
+  xpPrefab: {fileID: 9109268181781645753, guid: 1c7b54252abbfb64e88743e9b9ba9221, type: 3}
+  moneyPrefab:
+  - {fileID: 7247690582762657747, guid: 2b6c77ece60495747965d17d1325f0f3, type: 3}
+  - {fileID: 4880458922824029031, guid: 7ce67bc28eeb2e14ea29efa1c2debb4d, type: 3}
   attackClip: {fileID: 8300000, guid: 3981bb3c2fcab1e4fadef066e3969edc, type: 3}
   deathClip: {fileID: 8300000, guid: 1a63984c7c9ad2042a0805a1b8ab425e, type: 3}
   damageClip: {fileID: 8300000, guid: 50794635d53ee7e4a866b53099a25c6b, type: 3}
@@ -245,4 +246,50 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Size: {x: 0.99227, y: 0.55163014}
+  m_EdgeRadius: 0
+--- !u!61 &8376609052487696
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 730835691878994017}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: -0.006334424}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 0.5819311}
   m_EdgeRadius: 0

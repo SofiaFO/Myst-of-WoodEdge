@@ -49,6 +49,7 @@ public class PlayerController : MonoBehaviour
         if (collision.CompareTag("Enemy"))
         {
             TakeDamage(0.5f);
+            print("Dano por inimigo");
         }
     }
 
