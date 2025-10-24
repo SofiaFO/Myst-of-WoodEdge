@@ -17,6 +17,7 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private float currentXP = 0f;
     [SerializeField] private float xpToNextLevel = 100f;
     [SerializeField] private int money = 0;
+    [SerializeField] private float moneyMultiplier = 1f;
 
     private float currentHealth;
 
@@ -28,6 +29,17 @@ public class PlayerStats : MonoBehaviour
 
     public event Action OnDeath; // para PlayerController reagir quando morrer
 
+    private void Awake()
+    {
+        PlayerStats[] players = FindObjectsOfType<PlayerStats>();
+        if (players.Length > 1)
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
+
+    
     void Start()
     {
         currentHealth = maxHealth;
@@ -59,6 +71,12 @@ public class PlayerStats : MonoBehaviour
     {
         return defense;
     }
+    
+    public void IncreaseHealth(float amount)
+    {
+        maxHealth += amount;
+        currentHealth = maxHealth;
+    }
 
     public void IncreaseAttack(float amount)
     {
@@ -68,6 +86,18 @@ public class PlayerStats : MonoBehaviour
     public void IncreaseDefense(float amount)
     {
         defense += amount;
+    }
+    
+    public void IncreaseMoneyMultiplier(float amount)
+    {
+        moneyMultiplier += amount;
+        Debug.Log($"Novo multiplicador de dinheiro: {moneyMultiplier}");
+    }
+    
+    public void AddMoneyFromKill(int baseAmount)
+    {
+        int total = Mathf.RoundToInt(baseAmount * moneyMultiplier);
+        AddMoney(total);
     }
 
     // === XP / LEVEL ===

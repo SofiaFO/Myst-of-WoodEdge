@@ -3,81 +3,195 @@ using UnityEngine;
 
 public class InfiniteMapGenerator : MonoBehaviour
 {
-    
+    public static InfiniteMapGenerator Instance;
+
+    [Header("Configurações")]
     public Transform player;
-    public GameObject[] tilePrefabs;
+    public List<GameObject> mapPrefabs;
 
+    [Tooltip("Largura total do mapa em unidades")]
+    public float mapWidth = 36f;
 
-    public int gridSize = 5;          // Número de tiles por eixo (ex: 5x5)
-    public float tileSize = 10f;      // Tamanho do tile (depende do prefab)
+    [Tooltip("Altura total do mapa em unidades")]
+    public float mapHeight = 28f;
 
-    private Dictionary<Vector2Int, GameObject> tiles = new Dictionary<Vector2Int, GameObject>();
-    private Vector2Int playerTileCoord;
+    [Tooltip("Distância máxima antes de descarregar mapas")]
+    public float unloadDistance = 60f;
 
+    private readonly Dictionary<Vector2Int, GameObject> loadedMaps = new();
+    private readonly Dictionary<Vector2Int, Vector3> mapPositions = new(); // NOVO: rastreia posições exatas
 
-    void Start()
+    private void Awake()
     {
-        GenerateInitialTiles();
-        UpdatePlayerTileCoord();
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
-    void Update()
+    private void Start()
     {
-        Vector2Int newCoord = GetTileCoordFromPosition(player.position);
-        if (newCoord != playerTileCoord)
+        Debug.Log("🟢 [InfiniteMapGenerator] Inicializando mapa inicial...");
+        SpawnMap(Vector2Int.zero, Vector3.zero);
+    }
+
+    private void Update()
+    {
+        Vector3 playerPos = player.position;
+
+        // Ativa/desativa mapas com base na distância do jogador
+        foreach (var kvp in loadedMaps)
         {
-            playerTileCoord = newCoord;
-            UpdateTilesPosition();
+            float distance = Vector3.Distance(playerPos, kvp.Value.transform.position);
+            kvp.Value.SetActive(distance <= unloadDistance);
         }
     }
 
-    void GenerateInitialTiles()
+    // Retorna em qual mapa o jogador está baseado na posição
+    private Vector2Int GetPlayerMapCoord()
     {
-        int half = gridSize / 2;
-        for (int x = -half; x <= half; x++)
+        Vector3 playerPos = player.position;
+        
+        // Calcula qual grid o jogador está baseado na posição
+        // Ajuste importante: centraliza o cálculo corretamente
+        int x = Mathf.FloorToInt(playerPos.x / mapWidth + 0.5f);
+        int y = Mathf.FloorToInt(playerPos.y / mapHeight + 0.5f);
+        
+        Vector2Int coord = new Vector2Int(x, y);
+        
+        Debug.Log($"🎮 [GetPlayerMapCoord] Player pos: {playerPos} → Calculado [{x}, {y}] → Mapa [{coord.x}, {coord.y}]");
+        
+        // Verifica se esse mapa realmente existe
+        if (!loadedMaps.ContainsKey(coord))
         {
-            for (int y = -half; y <= half; y++)
+            Debug.LogWarning($"⚠️ [GetPlayerMapCoord] Mapa calculado {coord} não existe! Procurando mapa mais próximo...");
+            
+            // Busca o mapa mais próximo como fallback
+            Vector2Int closest = Vector2Int.zero;
+            float minDist = float.MaxValue;
+            
+            foreach (var kvp in mapPositions)
             {
-                Vector2Int coord = new Vector2Int(x, y);
-                Vector3 pos = new Vector3(x * tileSize, 0, y * tileSize);
-                GameObject prefab = tilePrefabs[Random.Range(0, tilePrefabs.Length)];
-                GameObject instance = Instantiate(prefab, pos, Quaternion.identity, transform);
-                tiles.Add(coord, instance);
+                float dist = Vector3.Distance(playerPos, kvp.Value);
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    closest = kvp.Key;
+                }
             }
+            
+            Debug.Log($"🔍 [GetPlayerMapCoord] Usando mapa mais próximo: {closest} (dist: {minDist})");
+            return closest;
         }
+        
+        return coord;
     }
 
-    void UpdateTilesPosition()
+    // Spawna um mapa em coordenadas específicas
+    private void SpawnMap(Vector2Int coord, Vector3 position)
     {
-        // Reposiciona os tiles para sempre cobrir o entorno do jogador
-        int half = gridSize / 2;
-        List<Vector2Int> usedCoords = new List<Vector2Int>();
-
-        foreach (var kvp in tiles)
+        if (loadedMaps.ContainsKey(coord))
         {
-            Vector2Int coord = kvp.Key;
-            GameObject tile = kvp.Value;
-
-            Vector2Int offset = new Vector2Int(
-                Mathf.RoundToInt(playerTileCoord.x + coord.x - Mathf.FloorToInt(gridSize / 2)),
-                Mathf.RoundToInt(playerTileCoord.y + coord.y - Mathf.FloorToInt(gridSize / 2))
-            );
-
-            Vector3 newPos = new Vector3(offset.x * tileSize, 0, offset.y * tileSize);
-            tile.transform.position = newPos;
-            usedCoords.Add(offset);
+            Debug.LogWarning($"⚠️ Tentando spawnar mapa que já existe em {coord}");
+            return;
         }
+
+        GameObject prefab = GetRandomMapPrefab();
+        GameObject map = Instantiate(prefab, position, Quaternion.identity, transform);
+        map.name = $"Map_{coord.x}_{coord.y}";
+
+        loadedMaps[coord] = map;
+        mapPositions[coord] = position; // Salva a posição exata
+
+        Debug.Log($"🧱 [SpawnMap] Mapa {coord} criado na posição {position}");
     }
 
-    Vector2Int GetTileCoordFromPosition(Vector3 pos)
+    // MÉTODO CORRIGIDO: Agora calcula baseado na posição do jogador, não no exitPosition
+    public void SpawnNextMap(string exitName, Vector3 exitPosition)
     {
-        int x = Mathf.FloorToInt(pos.x / tileSize);
-        int y = Mathf.FloorToInt(pos.z / tileSize);
-        return new Vector2Int(x, y);
+        Debug.Log($"🚪 [SpawnNextMap] Chamado! Exit: {exitName}, Pos: {exitPosition}, Player: {player.position}");
+        
+        // Descobre em qual mapa o jogador está AGORA
+        Vector2Int currentCoord = GetPlayerMapCoord();
+        
+        if (!loadedMaps.ContainsKey(currentCoord))
+        {
+            Debug.LogError($"❌ [SpawnNextMap] Mapa atual {currentCoord} não existe no dicionário!");
+            Debug.Log($"📋 Mapas carregados: {string.Join(", ", loadedMaps.Keys)}");
+            return;
+        }
+
+        // Calcula coordenada do próximo mapa
+        Vector2Int dir = GetDirection(exitName);
+        Vector2Int newCoord = currentCoord + dir;
+
+        Debug.Log($"📍 [SpawnNextMap] Mapa atual: {currentCoord}, Direção: {dir}, Novo mapa: {newCoord}");
+
+        // Se já existe, não precisa criar
+        if (loadedMaps.ContainsKey(newCoord))
+        {
+            Debug.Log($"✅ [SpawnNextMap] Mapa {newCoord} já existe!");
+            return;
+        }
+
+        // Calcula posição do novo mapa baseado na posição do mapa atual
+        Vector3 currentMapPos = mapPositions[currentCoord];
+        Vector3 offset = exitName switch
+        {
+            "ExitTop" => new Vector3(0, mapHeight, 0),
+            "ExitDown" => new Vector3(0, -mapHeight, 0),
+            "ExitLeft" => new Vector3(-mapWidth, 0, 0),
+            "ExitRight" => new Vector3(mapWidth, 0, 0),
+            _ => Vector3.zero
+        };
+        Vector3 newPos = currentMapPos + offset;
+
+        Debug.Log($"🌍 [SpawnNextMap] Criando novo mapa em {newCoord} na posição {newPos}");
+        
+        // Cria o novo mapa
+        SpawnMap(newCoord, newPos);
     }
 
-    void UpdatePlayerTileCoord()
+    // Converte nome da saída em direção de coordenadas
+    private Vector2Int GetDirection(string exitName)
     {
-        playerTileCoord = GetTileCoordFromPosition(player.position);
+        return exitName switch
+        {
+            "ExitTop" => new Vector2Int(0, 1),
+            "ExitDown" => new Vector2Int(0, -1),
+            "ExitLeft" => new Vector2Int(-1, 0),
+            "ExitRight" => new Vector2Int(1, 0),
+            _ => Vector2Int.zero
+        };
+    }
+
+    // Pega prefab aleatório
+    private GameObject GetRandomMapPrefab()
+    {
+        int index = Random.Range(0, mapPrefabs.Count);
+        return mapPrefabs[index];
+    }
+
+    // MÉTODO HELPER para debug(DEBUG APENAS TIRAR DEPOIS)
+    private void OnDrawGizmos()
+    {
+        if (!Application.isPlaying) return;
+
+        // Desenha o grid dos mapas
+        Gizmos.color = Color.cyan;
+        foreach (var kvp in mapPositions)
+        {
+            Vector3 pos = kvp.Value;
+            Gizmos.DrawWireCube(pos, new Vector3(mapWidth, mapHeight, 0));
+            
+            #if UNITY_EDITOR
+            UnityEditor.Handles.Label(pos, $"[{kvp.Key.x},{kvp.Key.y}]");
+            #endif
+        }
+
+        // Desenha posição do player
+        if (player != null)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(player.position, 1f);
+        }
     }
 }
