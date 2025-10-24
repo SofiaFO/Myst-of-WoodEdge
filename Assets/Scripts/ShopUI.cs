@@ -1,40 +1,47 @@
 using UnityEngine;
 using UnityEngine.UI;
-
-[System.Serializable]
-public class ShopItem
-{
-    public string itemName;
-    public Sprite icon;
-    public int price;
-    public Button buyButton;
-    public Image iconImage;
-    public Text itemNameText;
-    public Text priceText;
-    public enum ItemType { Vida, Ataque, Defesa }
-    public ItemType type;
-}
+using UnityEngine.SceneManagement;
 
 public class ShopUI : MonoBehaviour
 {
     [SerializeField] private ShopItem[] items;
     [SerializeField] private PlayerStats playerStats;
+    [SerializeField] private Button backButton; 
+
 
     private void Start()
     {
-        // Inicializa os botões e textos
         foreach (var item in items)
         {
-            item.iconImage.sprite = item.icon;
-            item.itemNameText.text = item.itemName;
-            item.priceText.text = item.price.ToString() + " 💰";
-
             item.buyButton.onClick.AddListener(() => TryBuyItem(item));
         }
+
+        if (backButton != null)
+            backButton.onClick.AddListener(ReturnToPreviousScene);
     }
 
-    void TryBuyItem(ShopItem item)
+    private void TryBuyItem(ShopItem item)
     {
+        if (item == null)
+        {
+            Debug.LogError("❌ item está nulo!");
+            return;
+        }
+
+        if (GameManager.Instance == null)
+        {
+            Debug.LogError("❌ GameManager.Instance está nulo!");
+            return;
+        }
+
+        if (playerStats == null)
+        {
+            Debug.LogError("❌ playerStats está nulo!");
+            return;
+        }
+
+        Debug.Log($"Tentando comprar: {item.itemName}");
+    
         bool success = GameManager.Instance.SpendCoins(item.price);
 
         if (success)
@@ -56,7 +63,12 @@ public class ShopUI : MonoBehaviour
         }
         else
         {
-            Debug.Log("Coins insuficientes!");
+            Debug.Log("Moedas insuficientes!");
         }
+    }
+    
+    private void ReturnToPreviousScene()
+    {
+        SceneManager.LoadScene("MainMenu"); 
     }
 }

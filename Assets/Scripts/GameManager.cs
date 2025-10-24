@@ -4,6 +4,7 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+    public PlayerStats playerStats;
 
     [SerializeField] private TMP_Text coinText; // arrasta o texto da UI aqui no Inspector
 
@@ -11,15 +12,20 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        // Garante que só exista um GameManager
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject); // persiste entre cenas
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        if (playerStats == null)
+        {
+            playerStats = FindObjectOfType<PlayerStats>();
+            if (playerStats == null)
+                Debug.LogError(" Nenhum PlayerStats encontrado na cena!");
         }
     }
 

@@ -17,6 +17,7 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private float currentXP = 0f;
     [SerializeField] private float xpToNextLevel = 100f;
     [SerializeField] private int money = 0;
+    [SerializeField] private float moneyMultiplier = 1f;
 
     private float currentHealth;
 
@@ -28,6 +29,19 @@ public class PlayerStats : MonoBehaviour
 
     public event Action OnDeath; // para PlayerController reagir quando morrer
 
+    private void Awake()
+    {
+        PlayerStats[] players = FindObjectsOfType<PlayerStats>();
+        if (players.Length > 1)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        DontDestroyOnLoad(gameObject);
+    }
+
+    
     void Start()
     {
         currentHealth = maxHealth;

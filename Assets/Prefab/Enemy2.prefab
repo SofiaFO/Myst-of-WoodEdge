@@ -195,8 +195,9 @@ MonoBehaviour:
   attackRate: 1.5
   xpDrop: 25
   moneyDrop: 10
-  xpPrefab: {fileID: 0}
-  moneyPrefab: []
+  xpPrefab: {fileID: 9109268181781645753, guid: 1c7b54252abbfb64e88743e9b9ba9221, type: 3}
+  moneyPrefab:
+  - {fileID: 7247690582762657747, guid: 2b6c77ece60495747965d17d1325f0f3, type: 3}
   attackClip: {fileID: 8300000, guid: 3981bb3c2fcab1e4fadef066e3969edc, type: 3}
   deathClip: {fileID: 8300000, guid: 1a63984c7c9ad2042a0805a1b8ab425e, type: 3}
   damageClip: {fileID: 8300000, guid: 50794635d53ee7e4a866b53099a25c6b, type: 3}
