@@ -59,6 +59,12 @@ public class PlayerStats : MonoBehaviour
     {
         return defense;
     }
+    
+    public void IncreaseHealth(float amount)
+    {
+        maxHealth += amount;
+        currentHealth = maxHealth;
+    }
 
     public void IncreaseAttack(float amount)
     {

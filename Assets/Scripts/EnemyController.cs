@@ -22,6 +22,8 @@ public class EnemyController : MonoBehaviour
     private Animator _anim;
     private Collider2D _collider;
     private bool damaging = false;
+    private SpriteRenderer _spriteRenderer;
+
 
     [SerializeField] private GameObject xpPrefab;
     [SerializeField] private List <GameObject> moneyPrefab;
@@ -42,6 +44,7 @@ public class EnemyController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _anim = GetComponentInChildren<Animator>();
         _collider = GetComponent<Collider2D>();
+        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     private void Start()
@@ -68,6 +71,12 @@ public class EnemyController : MonoBehaviour
         else
             TryAttack();
     }
+    
+    private void Flipar(Vector2 direction)
+    {
+        if (direction.x != 0)
+            _spriteRenderer.flipX = direction.x > 0;
+    }
 
     private void FollowPlayer()
     {
@@ -76,12 +85,7 @@ public class EnemyController : MonoBehaviour
         Vector2 direction = ((Vector2)_player.position - (Vector2)_collider.bounds.center).normalized;
         _rb.linearVelocity = direction * moveSpeed;
 
-        if (direction.x != 0)
-        {
-            SpriteRenderer sr = GetComponent<SpriteRenderer>();
-            if (sr != null)
-                sr.flipX = direction.x < 0;
-        }
+        Flipar(direction);
     }
 
     private void TryAttack()
@@ -146,6 +150,7 @@ public class EnemyController : MonoBehaviour
 
     private void Die()
     {
+        GameManager.Instance.AddCoins(moneyDrop);
         _isDead = true;
         _rb.linearVelocity = Vector2.zero;
 
