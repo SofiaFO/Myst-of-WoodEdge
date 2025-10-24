@@ -11047,7 +11047,7 @@ Transform:
   m_GameObject: {fileID: 2567904945987658318}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -19.55, y: 3.128, z: 0}
+  m_LocalPosition: {x: -18.82, y: 3.14, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11097,7 +11097,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 27.993935, y: 0.60912323}
+  m_Size: {x: 27.993935, y: 2}
   m_EdgeRadius: 0
 --- !u!114 &456430568382986934
 MonoBehaviour:
@@ -11111,6 +11111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 129253dab5313d44c960f2259edba035, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapExit
+  exitName: ExitLeft
 --- !u!1 &3314379478322042809
 GameObject:
   m_ObjectHideFlags: 0
@@ -11138,7 +11139,7 @@ Transform:
   m_GameObject: {fileID: 3314379478322042809}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.18, y: 15.98, z: 0}
+  m_LocalPosition: {x: -1.15, y: 15.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11188,7 +11189,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 36.07084, y: 0.60912323}
+  m_Size: {x: 36.07084, y: 2}
   m_EdgeRadius: 0
 --- !u!114 &827479296382965110
 MonoBehaviour:
@@ -11202,6 +11203,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 129253dab5313d44c960f2259edba035, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapExit
+  exitName: ExitTop
 --- !u!1 &4747857237987996853
 GameObject:
   m_ObjectHideFlags: 0
@@ -11229,7 +11231,7 @@ Transform:
   m_GameObject: {fileID: 4747857237987996853}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 15.84, y: 3.128, z: 0}
+  m_LocalPosition: {x: 15.15, y: 3.14, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11279,7 +11281,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 27.993935, y: 0.60912323}
+  m_Size: {x: 27.993935, y: 2}
   m_EdgeRadius: 0
 --- !u!114 &7247196953306137793
 MonoBehaviour:
@@ -11293,6 +11295,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 129253dab5313d44c960f2259edba035, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapExit
+  exitName: ExitRight
 --- !u!1 &6211953096751783679
 GameObject:
   m_ObjectHideFlags: 0
@@ -11320,7 +11323,7 @@ Transform:
   m_GameObject: {fileID: 6211953096751783679}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.18, y: -11.42, z: 0}
+  m_LocalPosition: {x: -1.05, y: -10.64, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11370,7 +11373,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 36.07084, y: 0.60912323}
+  m_Size: {x: 36.07084, y: 2}
   m_EdgeRadius: 0
 --- !u!114 &8669217909965914373
 MonoBehaviour:
@@ -11384,3 +11387,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 129253dab5313d44c960f2259edba035, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapExit
+  exitName: ExitDown

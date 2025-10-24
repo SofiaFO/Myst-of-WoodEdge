@@ -1,37 +1,17 @@
 using UnityEngine;
-<<<<<<< HEAD
-using UnityEngine.UI;
-=======
 using TMPro;
->>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-<<<<<<< HEAD
-
-    [SerializeField] private Text coinText; // arrasta o texto da UI aqui no Inspector
-=======
     public PlayerStats playerStats;
 
     [SerializeField] private TMP_Text coinText; // arrasta o texto da UI aqui no Inspector
->>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197
 
     private int coins = 0;
 
     private void Awake()
     {
-<<<<<<< HEAD
-        // Garante que só exista um GameManager
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject); // persiste entre cenas
-        }
-        else
-        {
-            Destroy(gameObject);
-=======
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -46,7 +26,6 @@ public class GameManager : MonoBehaviour
             playerStats = FindObjectOfType<PlayerStats>();
             if (playerStats == null)
                 Debug.LogError(" Nenhum PlayerStats encontrado na cena!");
->>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197
         }
     }
 
@@ -97,8 +76,4 @@ public class GameManager : MonoBehaviour
     {
         coins = PlayerPrefs.GetInt("Coins", 0);
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197

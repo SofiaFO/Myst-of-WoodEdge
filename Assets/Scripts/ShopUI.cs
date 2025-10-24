@@ -1,46 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
-<<<<<<< HEAD
-
-[System.Serializable]
-public class ShopItem
-{
-    public string itemName;
-    public Sprite icon;
-    public int price;
-    public Button buyButton;
-    public Image iconImage;
-    public Text itemNameText;
-    public Text priceText;
-    public enum ItemType { Vida, Ataque, Defesa }
-    public ItemType type;
-}
-=======
 using UnityEngine.SceneManagement;
->>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197
 
 public class ShopUI : MonoBehaviour
 {
     [SerializeField] private ShopItem[] items;
     [SerializeField] private PlayerStats playerStats;
-<<<<<<< HEAD
-
-    private void Start()
-    {
-        // Inicializa os botões e textos
-        foreach (var item in items)
-        {
-            item.iconImage.sprite = item.icon;
-            item.itemNameText.text = item.itemName;
-            item.priceText.text = item.price.ToString() + " 💰";
-
-            item.buyButton.onClick.AddListener(() => TryBuyItem(item));
-        }
-    }
-
-    void TryBuyItem(ShopItem item)
-    {
-=======
     [SerializeField] private Button backButton; 
 
 
@@ -77,7 +42,6 @@ public class ShopUI : MonoBehaviour
 
         Debug.Log($"Tentando comprar: {item.itemName}");
     
->>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197
         bool success = GameManager.Instance.SpendCoins(item.price);
 
         if (success)
@@ -88,23 +52,13 @@ public class ShopUI : MonoBehaviour
                     playerStats.IncreaseHealth(10);
                     break;
                 case ShopItem.ItemType.Ataque:
-                    playerStats.IncreaseAttack(2);
+                    playerStats.IncreaseMoneyMultiplier((0.2f));
                     break;
                 case ShopItem.ItemType.Defesa:
                     playerStats.IncreaseDefense(2);
                     break;
             }
 
-<<<<<<< HEAD
-            Debug.Log($"🛍️ Comprou {item.itemName}!");
-        }
-        else
-        {
-            Debug.Log("❌ Coins insuficientes!");
-        }
-    }
-}
-=======
             Debug.Log($"Comprou {item.itemName}!");
         }
         else
@@ -118,4 +72,3 @@ public class ShopUI : MonoBehaviour
         SceneManager.LoadScene("MainMenu"); 
     }
 }
->>>>>>> af165bf5ec1353f0b3db43aca4f1e26936bb0197
