@@ -37,7 +37,7 @@ public class DropMoeda : MonoBehaviour
     {
         if (collision.CompareTag("Player") && _playerStats != null)
         {
-            _playerStats.AddMoney(coinValue); // aplica XP
+            _playerStats.AddMoneyFromKill(coinValue); // aplica XP
             AudioSource.PlayClipAtPoint(pickupSound, transform.position);
             Destroy(gameObject);           // remove o drop após pegar
         }

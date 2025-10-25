@@ -10,14 +10,16 @@ using UnityEngine.UI;
 public class PlayerStats : MonoBehaviour
 {
     [Header("Status Base")]
-    [SerializeField] private float maxHealth = 100;
+    [SerializeField] private float maxHealth;
     [SerializeField] private float attack = 20f;
-    [SerializeField] private float defense = 5f;
+    [SerializeField] private float defense;
     [SerializeField] private int level = 1;
     [SerializeField] private float currentXP = 0f;
     [SerializeField] private float xpToNextLevel = 100f;
     [SerializeField] private int money = 0;
-    [SerializeField] private float moneyMultiplier = 1f;
+    [SerializeField] private float moneyMultiplier;
+    private XpBar _xpBar;
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     private float currentHealth;
 
@@ -37,9 +39,25 @@ public class PlayerStats : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        _xpBar = FindObjectOfType<XpBar>();
+
+        if (!PlayerPrefs.HasKey("PlayerHealth"))
+            PlayerPrefs.SetFloat("PlayerHealth", 100f);
+        maxHealth = PlayerPrefs.GetFloat("PlayerHealth");
+
+        // Defense
+        if (!PlayerPrefs.HasKey("PlayerDefense"))
+            PlayerPrefs.SetFloat("PlayerDefense", 5f);
+        defense = PlayerPrefs.GetFloat("PlayerDefense");
+
+        // Money Multiplier
+        if (!PlayerPrefs.HasKey("PlayerMoneyMultiplier"))
+            PlayerPrefs.SetFloat("PlayerMoneyMultiplier", 1f);
+        moneyMultiplier = PlayerPrefs.GetFloat("PlayerMoneyMultiplier");
+        PlayerPrefs.Save(); // garante que qualquer valor padrão criado seja persistido
     }
 
-    
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -61,6 +79,23 @@ public class PlayerStats : MonoBehaviour
         UpdateUI();
     }
 
+    public void SetMaxHealth(float amount)
+    {
+        maxHealth = amount;
+        currentHealth = maxHealth;
+        UpdateUI();
+    }
+
+    public void SetDefense(float amount)
+    {
+        defense = amount;
+    }
+
+    public void SetMoneyMultiplier(float amount)
+    {
+        moneyMultiplier = amount;
+    }
+
     // === ATAQUE / DEFESA ===
     public float GetAttack()
     {
@@ -71,7 +106,17 @@ public class PlayerStats : MonoBehaviour
     {
         return defense;
     }
-    
+
+    public float GetMoneyMultiplier()
+    {
+        return moneyMultiplier;
+    }
+
+    public float GetHealth()
+    {
+        return maxHealth;
+    }
+
     public void IncreaseHealth(float amount)
     {
         maxHealth += amount;
@@ -104,6 +149,7 @@ public class PlayerStats : MonoBehaviour
     public void GainXP(float amount)
     {
         currentXP += amount;
+        _xpBar.increaseXP(amount);
 
         while (currentXP >= xpToNextLevel)
         {
@@ -118,6 +164,7 @@ public class PlayerStats : MonoBehaviour
     {
         level++;
         xpToNextLevel *= 1.25f; // aumenta XP necessária a cada nível
+        _xpBar.levelUp(xpToNextLevel);
         maxHealth += 10f;
         attack += 2f;
         defense += 1f;
@@ -148,7 +195,10 @@ public class PlayerStats : MonoBehaviour
     private void UpdateUI()
     {
         if (healthBar != null)
-            healthBar.value = currentHealth / maxHealth;
+        {
+            healthBar.maxValue = maxHealth;
+            healthBar.value = currentHealth;
+        }
 
         if (levelText != null)
             levelText.text = $"Lv. {level}";
@@ -166,4 +216,6 @@ public class PlayerStats : MonoBehaviour
     public float defenseValue => defense;
     public int Level => level;
     public int Money => money;
+    public float xpToNextLevelValue => xpToNextLevel;
+    public float CurrentXP => currentXP;
 }

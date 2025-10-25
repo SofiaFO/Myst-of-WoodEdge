@@ -5,8 +5,17 @@ using UnityEngine.SceneManagement;
 public class ShopUI : MonoBehaviour
 {
     [SerializeField] private ShopItem[] items;
-    [SerializeField] private PlayerStats playerStats;
     [SerializeField] private Button backButton; 
+    private VidaLojinha vidaLojinha;
+    private MultiplicadorLojinha multLojinha;
+    private DefesaLojinha defesaLojinha;
+
+    void Awake()
+    {
+        vidaLojinha = FindObjectOfType<VidaLojinha>();
+        multLojinha = FindObjectOfType<MultiplicadorLojinha>();
+        defesaLojinha = FindObjectOfType<DefesaLojinha>();
+    }
 
 
     private void Start()
@@ -18,6 +27,18 @@ public class ShopUI : MonoBehaviour
 
         if (backButton != null)
             backButton.onClick.AddListener(ReturnToPreviousScene);
+
+        updateHUD();
+    }
+
+    private void updateHUD()
+    {
+        if (vidaLojinha != null)
+            vidaLojinha.AtualizarVida(PlayerPrefs.GetFloat("PlayerHealth"));
+        if (multLojinha != null)
+            multLojinha.AtualizarMult(PlayerPrefs.GetFloat("PlayerMoneyMultiplier"));
+        if (defesaLojinha != null)
+            defesaLojinha.AtualizarDefesa(PlayerPrefs.GetFloat("PlayerDefense"));
     }
 
     private void TryBuyItem(ShopItem item)
@@ -34,12 +55,6 @@ public class ShopUI : MonoBehaviour
             return;
         }
 
-        if (playerStats == null)
-        {
-            Debug.LogError("❌ playerStats está nulo!");
-            return;
-        }
-
         Debug.Log($"Tentando comprar: {item.itemName}");
     
         bool success = GameManager.Instance.SpendCoins(item.price);
@@ -49,13 +64,25 @@ public class ShopUI : MonoBehaviour
             switch (item.type)
             {
                 case ShopItem.ItemType.Vida:
-                    playerStats.IncreaseHealth(10);
+                    float currentHealth = PlayerPrefs.GetFloat("PlayerHealth", 100f); // 100f é valor padrão caso não exista
+                    currentHealth += 10f; // adiciona 20
+                    PlayerPrefs.SetFloat("PlayerHealth", currentHealth);
+                    PlayerPrefs.Save(); // garante que o valor seja salvo
+                    updateHUD();
                     break;
                 case ShopItem.ItemType.Ataque:
-                    playerStats.IncreaseMoneyMultiplier((0.2f));
+                    float currentMultiplier = PlayerPrefs.GetFloat("PlayerMoneyMultiplier", 1f); // 1f é valor padrão caso não exista
+                    currentMultiplier += 0.2f; // adiciona 0.5
+                    PlayerPrefs.SetFloat("PlayerMoneyMultiplier", currentMultiplier);
+                    PlayerPrefs.Save(); // garante que o valor seja salvo
+                    updateHUD();
                     break;
                 case ShopItem.ItemType.Defesa:
-                    playerStats.IncreaseDefense(2);
+                    float currentDefense = PlayerPrefs.GetFloat("PlayerDefense", 0f); // 0f é valor padrão caso não exista
+                    currentDefense += 2f; // adiciona 5
+                    PlayerPrefs.SetFloat("PlayerDefense", currentDefense);
+                    PlayerPrefs.Save(); // garante que o valor seja salvo
+                    updateHUD();
                     break;
             }
 

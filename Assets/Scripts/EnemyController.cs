@@ -59,7 +59,23 @@ public class EnemyController : MonoBehaviour
 
     private void Update()
     {
-        if (_isDead || _player == null) return;
+        if (_isDead) return;
+
+        if (_player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                _player = playerObj.transform;
+                _playerStats = playerObj.GetComponent<PlayerStats>();
+            }
+            else
+            {
+                // Nenhum player na cena, inimigo fica parado
+                _rb.linearVelocity = Vector2.zero;
+                return;
+            }
+        }
 
         if (_collider == null) return;
         float distance = Vector2.Distance((Vector2)_player.position, (Vector2)_collider.bounds.center);
@@ -148,7 +164,6 @@ public class EnemyController : MonoBehaviour
 
     private void Die()
     {
-        GameManager.Instance.AddCoins(moneyDrop);
         _isDead = true;
         _rb.linearVelocity = Vector2.zero;
 
@@ -172,7 +187,7 @@ public class EnemyController : MonoBehaviour
             Instantiate(prefabToSpawn, transform.position, Quaternion.identity);
         }
 
-        StartCoroutine(DestroyAfterDelay(1.5f));
+        StartCoroutine(DestroyAfterDelay(0.5f));
     }
 
     private IEnumerator DestroyAfterDelay(float delay)

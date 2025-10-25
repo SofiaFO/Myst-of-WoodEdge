@@ -4,7 +4,7 @@ using System.Collections;
 public class Attack : MonoBehaviour
 {
     [SerializeField] float xSpeed = 5f;
-    [SerializeField] float moveTime = 1.5f; // tempo que se move antes de parar
+    [SerializeField] float moveTime = 2f; // tempo que se move antes de parar
 
     Rigidbody2D _rb;
 

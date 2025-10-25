@@ -174,8 +174,6 @@ MonoBehaviour:
     m_Bits: 0
   attackPoint: {fileID: 8529761014988169515}
   attackClip: {fileID: 8300000, guid: 5208ff2f92c85a946be7ebe9939618aa, type: 3}
-  damageInterval: 0.5
-  contactDamage: 0.5
 --- !u!50 &4243004328109131806
 Rigidbody2D:
   serializedVersion: 5
@@ -252,6 +250,7 @@ MonoBehaviour:
   currentXP: 0
   xpToNextLevel: 100
   money: 0
+  moneyMultiplier: 1
   healthBar: {fileID: 6091444554244616274}
   levelText: {fileID: 0}
   xpText: {fileID: 0}

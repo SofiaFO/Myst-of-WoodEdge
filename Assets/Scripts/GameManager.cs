@@ -6,9 +6,13 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     public PlayerStats playerStats;
 
-    [SerializeField] private TMP_Text coinText; // arrasta o texto da UI aqui no Inspector
+    private TMP_Text coinText; // arrasta o texto da UI aqui no Inspector
 
     private int coins = 0;
+
+    private float maxHealth;
+    private float defense;
+    private float moneyMultiplier;
 
     private void Awake()
     {
@@ -27,11 +31,18 @@ public class GameManager : MonoBehaviour
             if (playerStats == null)
                 Debug.LogError(" Nenhum PlayerStats encontrado na cena!");
         }
+
+        coinText = GameObject.FindWithTag("Coin")?.GetComponent<TMP_Text>();
+        coinText.text = coins.ToString();
+
     }
 
     void Start()
     {
         LoadCoins();
+        LoadHealth();
+        LoadDefense();
+        LoadMoneyMultiplier();
         UpdateCoinUI();
     }
 
@@ -75,5 +86,33 @@ public class GameManager : MonoBehaviour
     private void LoadCoins()
     {
         coins = PlayerPrefs.GetInt("Coins", 0);
+    }
+
+    private void LoadHealth()
+    {
+        if (!PlayerPrefs.HasKey("PlayerHealth"))
+            PlayerPrefs.SetFloat("PlayerHealth", 100f);
+
+        maxHealth = PlayerPrefs.GetFloat("PlayerHealth");
+    }
+
+    private void LoadDefense()
+    {
+        if (!PlayerPrefs.HasKey("PlayerDefense"))
+            PlayerPrefs.SetFloat("PlayerDefense", 5f);
+
+        defense = PlayerPrefs.GetFloat("PlayerDefense");
+        if (playerStats != null)
+            playerStats.SetDefense(defense);
+    }
+
+    private void LoadMoneyMultiplier()
+    {
+        if (!PlayerPrefs.HasKey("PlayerMoneyMultiplier"))
+            PlayerPrefs.SetFloat("PlayerMoneyMultiplier", 1f);
+
+        moneyMultiplier = PlayerPrefs.GetFloat("PlayerMoneyMultiplier");
+        if (playerStats != null)
+            playerStats.SetMoneyMultiplier(moneyMultiplier);
     }
 }

@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float moveSpeed;
     [SerializeField] GameObject attackPrefab1;
     [SerializeField] GameObject attackPrefab2;
+    private GameManager _gameManager;
     Rigidbody2D _rb;
     float xDir;
     float yDir;
@@ -36,6 +37,7 @@ public class PlayerController : MonoBehaviour
         _anim = GetComponentInChildren<Animator>();
         _stats = GetComponentInChildren<PlayerStats>();
         _playerStats = GetComponent<PlayerStats>();
+        _gameManager = FindObjectOfType<GameManager>();
 
     }
 
@@ -73,7 +75,7 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(LoadSceneAfterDelay());
             return;
         }
-
+        _gameManager.AddCoins(_playerStats.Money);
         // inicia coroutine para resetar o dano depois da animação
         StartCoroutine(EndDamageAfterDelay(0.6f)); // 0.6 = duração da animação de dano
     }
@@ -99,6 +101,7 @@ public class PlayerController : MonoBehaviour
     System.Collections.IEnumerator LoadSceneAfterDelay()
     {
         yield return new WaitForSeconds(2f); // espera o tempo definido
+        Destroy(gameObject); // destrói o objeto após 2 segundos
         SceneManager.LoadScene("GameOver");     // carrega a cena
     }
 

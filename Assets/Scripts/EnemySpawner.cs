@@ -69,7 +69,7 @@ public class EnemySpawner : MonoBehaviour
         for (int i = 0; i < 10; i++)
         {
             Vector2 randomDir = Random.insideUnitCircle.normalized * Random.Range(minDistanceFromPlayer, spawnRadius);
-            Vector3 candidate = player.position + new Vector3(randomDir.x, 0, randomDir.y);
+            Vector3 candidate = player.position + new Vector3(randomDir.x, randomDir.y, 0);
 
             // Aqui você pode colocar uma verificação de colisão com o terreno, se quiser
             return candidate;
