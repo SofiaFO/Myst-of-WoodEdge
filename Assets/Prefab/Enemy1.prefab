@@ -194,6 +194,7 @@ MonoBehaviour:
   moveSpeed: 1
   attackRange: 0.5
   attackRate: 1.5
+  playerSerie: {fileID: 0}
   xpPrefab: {fileID: 9109268181781645753, guid: 1c7b54252abbfb64e88743e9b9ba9221, type: 3}
   moneyPrefab:
   - {fileID: 7247690582762657747, guid: 2b6c77ece60495747965d17d1325f0f3, type: 3}

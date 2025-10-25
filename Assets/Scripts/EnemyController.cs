@@ -16,6 +16,7 @@ public class EnemyController : MonoBehaviour
     private float lastAttackTime = 0f;
     private Rigidbody2D _rb;
     private Transform _player;
+    [SerializeField] private GameObject playerSerie; // arrasta o Player aqui no Inspecto
     private PlayerStats _playerStats;
     private Animator _anim;
     private Collider2D _collider;
@@ -55,6 +56,18 @@ public class EnemyController : MonoBehaviour
             _player = playerObj.transform;
             _playerStats = playerObj.GetComponent<PlayerStats>();
         }
+        else
+        {
+            if (playerSerie != null)
+            {
+                _player = playerSerie.transform;
+                _playerStats = playerSerie.GetComponent<PlayerStats>();
+            }
+            else
+            {
+                Debug.LogError("Player não atribuído no Inspector!");
+            }
+        }
     }
 
     private void Update()
@@ -68,11 +81,13 @@ public class EnemyController : MonoBehaviour
             {
                 _player = playerObj.transform;
                 _playerStats = playerObj.GetComponent<PlayerStats>();
+                print("Player encontrado na cena.");
             }
             else
             {
                 // Nenhum player na cena, inimigo fica parado
                 _rb.linearVelocity = Vector2.zero;
+                print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                 return;
             }
         }

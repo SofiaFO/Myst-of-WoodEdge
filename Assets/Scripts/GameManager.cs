@@ -33,7 +33,8 @@ public class GameManager : MonoBehaviour
         }
 
         coinText = GameObject.FindWithTag("Coin")?.GetComponent<TMP_Text>();
-        coinText.text = coins.ToString();
+        if(coinText != null)
+            coinText.text = coins.ToString();
 
     }
 
