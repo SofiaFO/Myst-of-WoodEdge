@@ -11,11 +11,15 @@ public class EnemySpawner : MonoBehaviour
     [Header("Spawn Settings")]
     public int maxEnemies = 1;
     public float spawnInterval = 1.5f;
+    public float difficultyIncreaseInterval = 30f;
+    public int additionalEnemiesPerInterval = 5;
 
     public float despawnDistanceX = 13f;
     public float despawnDistanceY = 13f;
 
     private float nextSpawn;
+    private float nextDifficultyIncrease;
+    private int currentEnemyTier = 0;
     private List<GameObject> enemies = new List<GameObject>();
 
 
@@ -35,6 +39,19 @@ public class EnemySpawner : MonoBehaviour
             nextSpawn = Time.time + spawnInterval;
         }
 
+        if (Time.time >= nextDifficultyIncrease)
+        {
+            maxEnemies += additionalEnemiesPerInterval;
+
+            // 🔥 Libera novo tipo de inimigo (se existir)
+            if (currentEnemyTier < enemyPrefabs.Length - 1)
+            {
+                currentEnemyTier++;
+            }
+
+            nextDifficultyIncrease = Time.time + difficultyIncreaseInterval;
+        }
+
         Cleanup();
     }
 
@@ -43,11 +60,16 @@ public class EnemySpawner : MonoBehaviour
     // ================================
     void SpawnEnemy()
     {
-        Vector3 pos = GetOffScreenPosition();
+        int waveSize = Random.Range(2, 6);
 
-        GameObject prefab = enemyPrefabs[0];
-        GameObject e = Instantiate(prefab, pos, Quaternion.identity);
-        enemies.Add(e);
+        for (int i = 0; i < waveSize; i++)
+        {
+            Vector3 pos = GetOffScreenPosition();
+
+            GameObject prefab = enemyPrefabs[Random.Range(0, currentEnemyTier + 1)];
+            GameObject e = Instantiate(prefab, pos, Quaternion.identity);
+            enemies.Add(e);
+        }
     }
 
     Vector3 GetOffScreenPosition()
