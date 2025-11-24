@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1222008374045004209}
   - component: {fileID: 7774745708703617180}
   - component: {fileID: 2385418664000845033}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 5683587962034970537}
   - component: {fileID: 5000109822456322585}
   - component: {fileID: 2046028180378389176}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Enemy1
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -143,7 +143,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.084, y: 1.348, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1222008374045004209}
@@ -188,19 +188,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ad620839ff4cf8418d18a4b1524a16b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  maxHealth: 50
+  maxHealth: 15
   attack: 10
   defense: 2
-  moveSpeed: 1
+  moveSpeed: 0.8
   attackRange: 0.5
   attackRate: 1.5
+  softPushForce: 4
+  autoNudgeForce: 1.5
   playerSerie: {fileID: 0}
-  xpPrefab: {fileID: 9109268181781645753, guid: 1c7b54252abbfb64e88743e9b9ba9221, type: 3}
-  moneyPrefab:
-  - {fileID: 7247690582762657747, guid: 2b6c77ece60495747965d17d1325f0f3, type: 3}
   attackClip: {fileID: 8300000, guid: 3981bb3c2fcab1e4fadef066e3969edc, type: 3}
   deathClip: {fileID: 8300000, guid: 1a63984c7c9ad2042a0805a1b8ab425e, type: 3}
   damageClip: {fileID: 8300000, guid: 50794635d53ee7e4a866b53099a25c6b, type: 3}
+  xpPrefab: {fileID: 9109268181781645753, guid: 1c7b54252abbfb64e88743e9b9ba9221, type: 3}
+  moneyPrefab:
+  - {fileID: 7247690582762657747, guid: 2b6c77ece60495747965d17d1325f0f3, type: 3}
 --- !u!61 &5000109822456322585
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -235,7 +237,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0038650036, y: -0.012138724}
+  m_Offset: {x: -0.0038650036, y: 0.009253308}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -245,7 +247,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.99227, y: 0.7980633}
+  m_Size: {x: 0.99227, y: 0.989164}
   m_EdgeRadius: 0
 --- !u!61 &2046028180378389176
 BoxCollider2D:
@@ -281,7 +283,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.008137047, y: -0.023987174}
+  m_Offset: {x: -0.008137047, y: -0.02256091}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -291,5 +293,5 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.90853775, y: 0.4796605}
+  m_Size: {x: 0.90853775, y: 0.95598626}
   m_EdgeRadius: 0

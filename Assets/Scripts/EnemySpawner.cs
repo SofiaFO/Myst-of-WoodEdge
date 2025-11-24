@@ -1,85 +1,132 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    
     public Transform player;
 
-    
+    [Header("Enemy Types")]
     public GameObject[] enemyPrefabs;
-    public int maxEnemies = 20;
-    public float spawnRadius = 15f;
-    public float minDistanceFromPlayer = 5f;
-    public float spawnInterval = 2f;
 
-    
-    public float difficultyIncreaseInterval = 30f; // A cada 30s aumenta a dificuldade
+    [Header("Spawn Settings")]
+    public int maxEnemies = 1;
+    public float spawnInterval = 1.5f;
+    public float difficultyIncreaseInterval = 30f;
     public int additionalEnemiesPerInterval = 5;
 
-    private List<GameObject> spawnedEnemies = new List<GameObject>();
-    private float nextSpawnTime;
+    public float despawnDistanceX = 13f;
+    public float despawnDistanceY = 13f;
+
+    private float nextSpawn;
     private float nextDifficultyIncrease;
+    private int currentEnemyTier = 0;
+    private List<GameObject> enemies = new List<GameObject>();
+
 
     void Start()
     {
-        nextSpawnTime = Time.time + spawnInterval;
-        nextDifficultyIncrease = Time.time + difficultyIncreaseInterval;
+        nextSpawn = Time.time + spawnInterval;
     }
 
     void Update()
     {
+
         if (player == null) return;
 
-        // Spawna inimigos conforme o tempo
-        if (Time.time >= nextSpawnTime)
+        if (Time.time >= nextSpawn && enemies.Count < maxEnemies)
         {
-            TrySpawnEnemy();
-            nextSpawnTime = Time.time + spawnInterval;
+            SpawnEnemy();
+            nextSpawn = Time.time + spawnInterval;
         }
 
-        // Aumenta a dificuldade com o tempo
         if (Time.time >= nextDifficultyIncrease)
         {
             maxEnemies += additionalEnemiesPerInterval;
+
+            // 🔥 Libera novo tipo de inimigo (se existir)
+            if (currentEnemyTier < enemyPrefabs.Length - 1)
+            {
+                currentEnemyTier++;
+            }
+
             nextDifficultyIncrease = Time.time + difficultyIncreaseInterval;
         }
 
-        CleanupNullEnemies();
+        Cleanup();
     }
 
-    void TrySpawnEnemy()
+    // ================================
+    // SPAWN SISTEMA
+    // ================================
+    void SpawnEnemy()
     {
-        if (spawnedEnemies.Count >= maxEnemies) return;
+        int waveSize = Random.Range(2, 6);
 
-        Vector3 spawnPos = GetValidSpawnPosition();
-
-        if (spawnPos != Vector3.zero)
+        for (int i = 0; i < waveSize; i++)
         {
-            GameObject prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
-            GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
-            spawnedEnemies.Add(enemy);
+            Vector3 pos = GetOffScreenPosition();
+
+            GameObject prefab = enemyPrefabs[Random.Range(0, currentEnemyTier + 1)];
+            GameObject e = Instantiate(prefab, pos, Quaternion.identity);
+            enemies.Add(e);
         }
     }
 
-    Vector3 GetValidSpawnPosition()
+    Vector3 GetOffScreenPosition()
     {
-        // Tenta achar uma posição válida perto do player
-        for (int i = 0; i < 10; i++)
+        float minDist = 9f;
+        float maxDist = 10f;
+
+        Vector2 raw = Random.insideUnitCircle;
+
+        // se o vetor for muito pequeno, force outra direção
+        if (raw.sqrMagnitude < 0.01f)
+            raw = new Vector2(1, 0); // fallback seguro
+
+        Vector2 dir = raw.normalized;
+        float dist = Random.Range(minDist, maxDist);
+
+        Vector3 spawnPos = player.position + new Vector3(dir.x, dir.y, 0) * dist;
+
+        float dx = Mathf.Abs(spawnPos.x - player.position.x);
+        float dy = Mathf.Abs(spawnPos.y - player.position.y);
+
+        return spawnPos;
+    }
+
+
+    // ================================
+    // DESPAWN SISTEMA
+    // ================================
+    // Substitua sua função Cleanup() por esta:
+    void Cleanup()
+    {
+
+        // Itera de trás para frente para remover com segurança
+        for (int i = enemies.Count - 1; i >= 0; i--)
         {
-            Vector2 randomDir = Random.insideUnitCircle.normalized * Random.Range(minDistanceFromPlayer, spawnRadius);
-            Vector3 candidate = player.position + new Vector3(randomDir.x, randomDir.y, 0);
+            GameObject e = enemies[i];
 
-            // Aqui você pode colocar uma verificação de colisão com o terreno, se quiser
-            return candidate;
+            if (e == null)
+            {
+                enemies.RemoveAt(i);
+                continue;
+            }
+
+            Vector3 enemyPos = e.transform.position;
+            Vector3 playerPos = player.position;
+
+            // calcula deslocamento relativo (pode ser negativo) e então pega absoluto
+            Vector3 delta = enemyPos - playerPos;
+            float dx = Mathf.Abs(delta.x);
+            float dy = Mathf.Abs(delta.y);
+
+            if (dx > despawnDistanceX || dy > despawnDistanceY)
+            {
+                Destroy(e);
+                enemies.RemoveAt(i);
+            }
         }
-
-        return Vector3.zero;
     }
 
-    void CleanupNullEnemies()
-    {
-        spawnedEnemies.RemoveAll(e => e == null);
-    }
 }
