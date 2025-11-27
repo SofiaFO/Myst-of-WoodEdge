@@ -7,6 +7,7 @@ public class ShopItem
     public string description;
     public int price;
     public ItemType type;
-    public Button buyButton;     
+    public Button buyButton;
+    
     public enum ItemType { Vida, Ataque, Defesa, BonusDinheiro }
 }

@@ -31,16 +31,23 @@ public class PlayerStats : MonoBehaviour
 
     public event Action OnDeath; // para PlayerController reagir quando morrer
 
+    public static PlayerStats Instance;
+
     private void Awake()
     {
-        PlayerStats[] players = FindObjectsOfType<PlayerStats>();
-        if (players.Length > 1)
+        // Singleton seguro
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
         _xpBar = FindObjectOfType<XpBar>();
 
+        // Health
         if (!PlayerPrefs.HasKey("PlayerHealth"))
             PlayerPrefs.SetFloat("PlayerHealth", 100f);
         maxHealth = PlayerPrefs.GetFloat("PlayerHealth");
@@ -54,8 +61,10 @@ public class PlayerStats : MonoBehaviour
         if (!PlayerPrefs.HasKey("PlayerMoneyMultiplier"))
             PlayerPrefs.SetFloat("PlayerMoneyMultiplier", 1f);
         moneyMultiplier = PlayerPrefs.GetFloat("PlayerMoneyMultiplier");
-        PlayerPrefs.Save(); // garante que qualquer valor padrão criado seja persistido
+
+        PlayerPrefs.Save();
     }
+
 
 
     void Start()

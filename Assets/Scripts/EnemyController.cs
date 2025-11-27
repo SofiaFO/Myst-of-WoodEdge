@@ -46,6 +46,22 @@ public class EnemyController : MonoBehaviour
 
     private HashSet<Collider2D> alreadyHit = new HashSet<Collider2D>();
 
+    // ============================================================
+    //          SISTEMA DE DESVIO DE OBSTÁCULOS
+    // ============================================================
+    [Header("Sistema de Desvio")]
+    [SerializeField] private float obstacleDetectionDistance = 1.5f;
+    [SerializeField] private float sideRayDistance = 1.0f;
+    [SerializeField] private float stuckCheckTime = 0.5f;
+    [SerializeField] private float minMovementThreshold = 0.1f;
+    
+    private Vector2 lastPosition;
+    private float stuckTimer = 0f;
+    private bool isAvoiding = false;
+    private Vector2 avoidanceDirection;
+    private float avoidanceTimer = 0f;
+    private float avoidanceDuration = 1.0f;
+
 
     private void Awake()
     {
@@ -56,6 +72,8 @@ public class EnemyController : MonoBehaviour
 
         _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         _rb.mass = 0.1f;
+        
+        lastPosition = transform.position;
     }
 
 
@@ -76,7 +94,10 @@ public class EnemyController : MonoBehaviour
         else if (playerSerie != null)
         {
             _player = playerSerie.transform;
-            _playerStats = playerSerie.GetComponent<PlayerStats>();
+            _playerStats = playerObj.GetComponent<PlayerStats>();
+            if (_playerStats == null)
+                _playerStats = playerObj.GetComponentInChildren<PlayerStats>();
+
         }
         else
         {
@@ -109,6 +130,9 @@ public class EnemyController : MonoBehaviour
 
         float distance = Vector2.Distance(_player.position, _collider.bounds.center);
 
+        // Verifica se está preso
+        CheckIfStuck();
+
         if (!touchingPlayer)
         {
             if (distance > attackRange)
@@ -130,25 +154,151 @@ public class EnemyController : MonoBehaviour
     }
 
 
+    private void CheckIfStuck()
+    {
+        if (isKnockback || _isDead) return;
+
+        float distanceMoved = Vector2.Distance(transform.position, lastPosition);
+        
+        if (distanceMoved < minMovementThreshold && _rb.linearVelocity.magnitude > 0.1f)
+        {
+            stuckTimer += Time.deltaTime;
+            
+            if (stuckTimer >= stuckCheckTime)
+            {
+                // Está preso! Força uma nova direção de desvio
+                ForceAvoidance();
+                stuckTimer = 0f;
+            }
+        }
+        else
+        {
+            stuckTimer = 0f;
+        }
+        
+        lastPosition = transform.position;
+    }
+
+
+    private void ForceAvoidance()
+    {
+        Vector2 toPlayer = ((Vector2)_player.position - (Vector2)transform.position).normalized;
+        Vector2 perpendicular = Vector2.Perpendicular(toPlayer);
+        
+        // Escolhe aleatoriamente esquerda ou direita
+        if (Random.value > 0.5f)
+            perpendicular = -perpendicular;
+            
+        isAvoiding = true;
+        avoidanceDirection = perpendicular;
+        avoidanceTimer = avoidanceDuration;
+        
+        Debug.Log($"{gameObject.name} está preso! Forçando desvio.");
+    }
+
+
     private void FollowPlayer()
     {
-        if (_isDead || isKnockback || isSoftPushed) return;
+        if (_isDead || isKnockback) return;
 
-        Vector2 enemyCenter = _collider.bounds.center;
-        Vector2 playerPos = _player.position;
+        Vector2 origin = (Vector2)_collider.bounds.center;
+        Vector2 targetDir = ((Vector2)_player.position - origin).normalized;
 
-        float distance = Vector2.Distance(playerPos, enemyCenter);
-        float stopDistance = attackRange * 0.9f;
-
-        if (distance <= stopDistance)
+        // Se está em modo de desvio, continua desviando
+        if (isAvoiding)
         {
-            _rb.linearVelocity = Vector2.zero;
-            return;
+            avoidanceTimer -= Time.deltaTime;
+            
+            if (avoidanceTimer <= 0f)
+            {
+                isAvoiding = false;
+            }
+            else
+            {
+                // Mistura a direção de desvio com a direção do player
+                Vector2 blendedDirection = (avoidanceDirection * 0.7f + targetDir * 0.3f).normalized;
+                _rb.linearVelocity = blendedDirection * moveSpeed;
+                Flipar(blendedDirection);
+                return;
+            }
         }
 
-        Vector2 dir = (playerPos - enemyCenter).normalized;
-        _rb.linearVelocity = dir * moveSpeed;
-        Flipar(dir);
+        // Empurra o raio um pouco para frente
+        Vector2 rayOrigin = origin + targetDir * 0.3f;
+        
+        // Raycast central
+        RaycastHit2D centerHit = Physics2D.Raycast(rayOrigin, targetDir, obstacleDetectionDistance, LayerMask.GetMask("Default"));
+        
+        // Raycasts laterais
+        Vector2 perpLeft = Vector2.Perpendicular(targetDir);
+        Vector2 perpRight = -perpLeft;
+        
+        RaycastHit2D leftHit = Physics2D.Raycast(rayOrigin, (targetDir + perpLeft).normalized, sideRayDistance, LayerMask.GetMask("Default"));
+        RaycastHit2D rightHit = Physics2D.Raycast(rayOrigin, (targetDir + perpRight).normalized, sideRayDistance, LayerMask.GetMask("Default"));
+
+        // Visualização dos raycasts
+        Debug.DrawRay(rayOrigin, targetDir * obstacleDetectionDistance, Color.red);
+        Debug.DrawRay(rayOrigin, (targetDir + perpLeft).normalized * sideRayDistance, Color.blue);
+        Debug.DrawRay(rayOrigin, (targetDir + perpRight).normalized * sideRayDistance, Color.green);
+
+        Vector2 finalDirection = targetDir;
+
+        // Detectou obstáculo à frente
+        if (centerHit.collider != null && centerHit.collider.CompareTag("Tronco"))
+        {
+            bool leftBlocked = leftHit.collider != null && leftHit.collider.CompareTag("Tronco");
+            bool rightBlocked = rightHit.collider != null && rightHit.collider.CompareTag("Tronco");
+
+            if (!leftBlocked && !rightBlocked)
+            {
+                // Ambos os lados livres - escolhe o lado mais próximo do player
+                Vector2 toPlayer = (Vector2)_player.position - origin;
+                float dotLeft = Vector2.Dot(toPlayer, perpLeft);
+                
+                if (dotLeft > 0)
+                    finalDirection = perpLeft;
+                else
+                    finalDirection = perpRight;
+                    
+                // Inicia modo de desvio
+                isAvoiding = true;
+                avoidanceDirection = finalDirection;
+                avoidanceTimer = avoidanceDuration * 0.5f;
+            }
+            else if (!leftBlocked)
+            {
+                finalDirection = perpLeft;
+                isAvoiding = true;
+                avoidanceDirection = finalDirection;
+                avoidanceTimer = avoidanceDuration * 0.5f;
+            }
+            else if (!rightBlocked)
+            {
+                finalDirection = perpRight;
+                isAvoiding = true;
+                avoidanceDirection = finalDirection;
+                avoidanceTimer = avoidanceDuration * 0.5f;
+            }
+            else
+            {
+                // Ambos bloqueados - tenta voltar
+                finalDirection = -targetDir;
+                ForceAvoidance();
+            }
+        }
+        // Obstáculo só na esquerda
+        else if (leftHit.collider != null && leftHit.collider.CompareTag("Tronco"))
+        {
+            finalDirection = (targetDir + perpRight * 0.5f).normalized;
+        }
+        // Obstáculo só na direita
+        else if (rightHit.collider != null && rightHit.collider.CompareTag("Tronco"))
+        {
+            finalDirection = (targetDir + perpLeft * 0.5f).normalized;
+        }
+
+        _rb.linearVelocity = finalDirection * moveSpeed;
+        Flipar(finalDirection);
     }
 
 
@@ -192,6 +342,7 @@ public class EnemyController : MonoBehaviour
         if (_isDead) yield break;
 
         isKnockback = true;
+        isAvoiding = false; // Cancela desvio durante knockback
         _rb.linearVelocity = Vector2.zero;
 
         _rb.AddForce(dir * force, ForceMode2D.Impulse);
@@ -209,12 +360,19 @@ public class EnemyController : MonoBehaviour
     {
         if (!collision.CompareTag("Attack")) return;
 
+        if (_playerStats == null)
+        {
+            Debug.LogError("❌ _playerStats é NULL! O inimigo tomou dano mas não sabe quem é o player!");
+            return;
+        }
+
         if (alreadyHit.Contains(collision)) return;
         alreadyHit.Add(collision);
 
-        float dmg = _playerStats.GetAttack();
+        float dmg = _playerStats.GetAttack(); // agora só roda se NÃO for null
         TakeDamage(dmg);
     }
+
 
 
 
@@ -224,6 +382,26 @@ public class EnemyController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        // Detecta colisão com obstáculos
+        if (collision.collider.CompareTag("Tronco"))
+        {
+            // Calcula direção de repulsão do obstáculo
+            Vector2 awayFromObstacle = ((Vector2)transform.position - (Vector2)collision.transform.position).normalized;
+            Vector2 toPlayer = ((Vector2)_player.position - (Vector2)transform.position).normalized;
+            
+            // Combina as direções para desviar do obstáculo na direção geral do player
+            Vector2 avoidDir = (awayFromObstacle * 0.6f + Vector2.Perpendicular(toPlayer) * 0.4f).normalized;
+            
+            isAvoiding = true;
+            avoidanceDirection = avoidDir;
+            avoidanceTimer = avoidanceDuration;
+            
+            // Aplica um pequeno impulso para sair do obstáculo
+            _rb.AddForce(awayFromObstacle * 2f, ForceMode2D.Impulse);
+            
+            return;
+        }
+
         if (!collision.collider.CompareTag("Player")) return;
 
         if (_rb.linearVelocity.sqrMagnitude < 0.01f) return;
@@ -245,6 +423,17 @@ public class EnemyController : MonoBehaviour
             pushDir = new Vector2(Mathf.Sign(delta.x), 0);
 
         StartCoroutine(SoftPush(pushDir));
+    }
+
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        // Continua tentando sair se ainda estiver colidindo com obstáculo
+        if (collision.collider.CompareTag("Tronco") && !isKnockback)
+        {
+            Vector2 awayFromObstacle = ((Vector2)transform.position - (Vector2)collision.transform.position).normalized;
+            _rb.AddForce(awayFromObstacle * 1.5f, ForceMode2D.Force);
+        }
     }
 
 
@@ -302,5 +491,9 @@ public class EnemyController : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
+        
+        // Visualiza a área de detecção de obstáculos
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, obstacleDetectionDistance);
     }
 }
