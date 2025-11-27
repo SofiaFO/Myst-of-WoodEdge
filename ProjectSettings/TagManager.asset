@@ -8,6 +8,12 @@ TagManager:
   - Attack
   - Loot
   - Coin
+  - AxeSprite
+  - Card1
+  - Card2
+  - Card3
+  - CardUI
+  - "Machado Girat\xF3rio"
   - Tronco
   layers:
   - Default
@@ -16,9 +22,9 @@ TagManager:
   - 
   - Water
   - UI
-  - Combat
-  - 
-  - 
+  - Player
+  - Enemy
+  - Attack
   - 
   - 
   - 

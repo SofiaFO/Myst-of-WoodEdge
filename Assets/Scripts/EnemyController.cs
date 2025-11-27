@@ -85,11 +85,7 @@ public class EnemyController : MonoBehaviour
         if (playerObj != null)
         {
             _player = playerObj.transform;
-            print("Player encontrado automaticamente.");
-            print(playerObj);
             _playerStats = playerObj.GetComponent<PlayerStats>();
-            print("Status do Player:");
-            print(_playerStats);
         }
         else if (playerSerie != null)
         {
@@ -330,7 +326,7 @@ public class EnemyController : MonoBehaviour
         Vector2 knockDir = ((Vector2)transform.position - (Vector2)_player.position).normalized;
 
         // Inicia knockback leve
-        StartCoroutine(DoKnockback(knockDir, 4f));
+        StartCoroutine(DoKnockback(knockDir, 0.8f));
 
         if (currentHealth <= 0)
             Die();
@@ -368,8 +364,14 @@ public class EnemyController : MonoBehaviour
 
         if (alreadyHit.Contains(collision)) return;
         alreadyHit.Add(collision);
-
-        float dmg = _playerStats.GetAttack(); // agora só roda se NÃO for null
+        if (_playerStats == null) {
+            GameObject playerObjx = GameObject.FindGameObjectWithTag("Player");
+            if (playerObjx != null)
+            {
+                _playerStats = playerObjx.GetComponent<PlayerStats>();
+            }
+        }
+        float dmg = _playerStats.GetAttack();
         TakeDamage(dmg);
     }
 

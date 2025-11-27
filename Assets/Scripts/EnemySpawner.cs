@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public Transform player;
+    private Transform player;
 
     [Header("Enemy Types")]
     public GameObject[] enemyPrefabs;
@@ -22,6 +22,17 @@ public class EnemySpawner : MonoBehaviour
     private int currentEnemyTier = 0;
     private List<GameObject> enemies = new List<GameObject>();
 
+    void Awake()
+    {
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                player = playerObj.transform;
+            }
+        }
+    }
 
     void Start()
     {
@@ -43,7 +54,7 @@ public class EnemySpawner : MonoBehaviour
         {
             maxEnemies += additionalEnemiesPerInterval;
 
-            // 🔥 Libera novo tipo de inimigo (se existir)
+            //
             if (currentEnemyTier < enemyPrefabs.Length - 1)
             {
                 currentEnemyTier++;
