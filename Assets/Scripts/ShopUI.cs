@@ -10,6 +10,10 @@ public class ShopUI : MonoBehaviour
     private MultiplicadorLojinha multLojinha;
     private DefesaLojinha defesaLojinha;
 
+    private const float MAX_HEALTH = 200f;
+    private const float MAX_ATTACK_MULT = 3f;
+    private const float MAX_DEFENSE = 50f;
+    
     void Awake()
     {
         vidaLojinha = FindObjectOfType<VidaLojinha>();
@@ -42,57 +46,88 @@ public class ShopUI : MonoBehaviour
     }
 
     private void TryBuyItem(ShopItem item)
+{
+    if (item == null)
     {
-        if (item == null)
-        {
-            Debug.LogError("❌ item está nulo!");
-            return;
-        }
+        Debug.LogError("❌ item está nulo!");
+        return;
+    }
 
-        if (GameManager.Instance == null)
-        {
-            Debug.LogError("❌ GameManager.Instance está nulo!");
-            return;
-        }
+    if (GameManager.Instance == null)
+    {
+        Debug.LogError("❌ GameManager.Instance está nulo!");
+        return;
+    }
 
-        Debug.Log($"Tentando comprar: {item.itemName}");
-    
-        bool success = GameManager.Instance.SpendCoins(item.price);
+    Debug.Log($"Tentando comprar: {item.itemName}");
 
-        if (success)
-        {
-            switch (item.type)
+    bool success = GameManager.Instance.SpendCoins(item.price);
+
+    if (!success)
+    {
+        Debug.Log("Moedas insuficientes!");
+        return;
+    }
+
+    switch (item.type)
+    {
+        case ShopItem.ItemType.Vida:
+            float currentHealth = PlayerPrefs.GetFloat("PlayerHealth", 100f);
+
+            if (currentHealth >= MAX_HEALTH)
             {
-                case ShopItem.ItemType.Vida:
-                    float currentHealth = PlayerPrefs.GetFloat("PlayerHealth", 100f); // 100f é valor padrão caso não exista
-                    currentHealth += 10f; // adiciona 20
-                    PlayerPrefs.SetFloat("PlayerHealth", currentHealth);
-                    PlayerPrefs.Save(); // garante que o valor seja salvo
-                    updateHUD();
-                    break;
-                case ShopItem.ItemType.Ataque:
-                    float currentMultiplier = PlayerPrefs.GetFloat("PlayerMoneyMultiplier", 1f); // 1f é valor padrão caso não exista
-                    currentMultiplier += 0.2f; // adiciona 0.5
-                    PlayerPrefs.SetFloat("PlayerMoneyMultiplier", currentMultiplier);
-                    PlayerPrefs.Save(); // garante que o valor seja salvo
-                    updateHUD();
-                    break;
-                case ShopItem.ItemType.Defesa:
-                    float currentDefense = PlayerPrefs.GetFloat("PlayerDefense", 0f); // 0f é valor padrão caso não exista
-                    currentDefense += 2f; // adiciona 5
-                    PlayerPrefs.SetFloat("PlayerDefense", currentDefense);
-                    PlayerPrefs.Save(); // garante que o valor seja salvo
-                    updateHUD();
-                    break;
+                Debug.Log("🚫 Vida já está no máximo!");
+                return;
             }
 
-            Debug.Log($"Comprou {item.itemName}!");
-        }
-        else
-        {
-            Debug.Log("Moedas insuficientes!");
-        }
+            currentHealth += 10f;
+
+            if (currentHealth > MAX_HEALTH)
+                currentHealth = MAX_HEALTH;
+
+            PlayerPrefs.SetFloat("PlayerHealth", currentHealth);
+            break;
+
+        case ShopItem.ItemType.Ataque:
+            float currentMultiplier = PlayerPrefs.GetFloat("PlayerMoneyMultiplier", 1f);
+
+            if (currentMultiplier >= MAX_ATTACK_MULT)
+            {
+                Debug.Log("🚫 Multiplicador já está no máximo!");
+                return;
+            }
+
+            currentMultiplier += 0.2f;
+
+            if (currentMultiplier > MAX_ATTACK_MULT)
+                currentMultiplier = MAX_ATTACK_MULT;
+
+            PlayerPrefs.SetFloat("PlayerMoneyMultiplier", currentMultiplier);
+            break;
+
+        case ShopItem.ItemType.Defesa:
+            float currentDefense = PlayerPrefs.GetFloat("PlayerDefense", 0f);
+
+            if (currentDefense >= MAX_DEFENSE)
+            {
+                Debug.Log("🚫 Defesa já está no máximo!");
+                return;
+            }
+
+            currentDefense += 2f;
+
+            if (currentDefense > MAX_DEFENSE)
+                currentDefense = MAX_DEFENSE;
+
+            PlayerPrefs.SetFloat("PlayerDefense", currentDefense);
+            break;
     }
+
+    PlayerPrefs.Save();
+    updateHUD();
+
+    Debug.Log($"Comprou {item.itemName}!");
+}
     
     private void ReturnToPreviousScene()
     {

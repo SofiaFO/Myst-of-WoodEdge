@@ -80,7 +80,7 @@ SpriteRenderer:
   m_SortingLayerID: 163158239
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: -4331948892352828423, guid: d531c55c7f0e9d2409903e5ac3f54c2c, type: 3}
+  m_Sprite: {fileID: 422261270430255068, guid: ef80899929b9f98439bfd922eef277d8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -101,7 +101,7 @@ Animator:
   m_GameObject: {fileID: 186278870392465097}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 0750bfa1a8cb34c4a96148a6440ecbc8, type: 2}
+  m_Controller: {fileID: 9100000, guid: 6a0a1687d50aa7b408107cbc47a22b66, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -127,7 +127,7 @@ GameObject:
   - component: {fileID: 5000109822456322585}
   - component: {fileID: 3725499753358158504}
   m_Layer: 7
-  m_Name: Enemy3
+  m_Name: Enemy4
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -203,6 +203,10 @@ MonoBehaviour:
   xpPrefab: {fileID: 9109268181781645753, guid: 1c7b54252abbfb64e88743e9b9ba9221, type: 3}
   moneyPrefab:
   - {fileID: 7247690582762657747, guid: 2b6c77ece60495747965d17d1325f0f3, type: 3}
+  obstacleDetectionDistance: 1.5
+  sideRayDistance: 1
+  stuckCheckTime: 0.5
+  minMovementThreshold: 0.1
 --- !u!61 &5000109822456322585
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -237,7 +241,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0038650036, y: -0.017066866}
+  m_Offset: {x: -0.0038651228, y: -0.017066866}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -247,7 +251,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.2693708, y: 1.5584295}
+  m_Size: {x: 1.147275, y: 1.5014513}
   m_EdgeRadius: 0
 --- !u!61 &3725499753358158504
 BoxCollider2D:
