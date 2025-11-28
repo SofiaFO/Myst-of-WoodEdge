@@ -20,12 +20,16 @@ public class PlayerController : MonoBehaviour
     Vector2 _moveInput;
     [SerializeField] AudioClip deathClip;
     Animator _anim;
+    private float _damageSoundCooldown = 0.25f; // 250ms de intervalo
+    private float _lastDamageSoundTime = -999f; // tempo do último som
+
 
     [SerializeField] float attackRate;     // segundos entre ataques
     [SerializeField] public float attackDamage;
     [SerializeField] LayerMask enemyLayer;        // layer(s) que serão considerados inimigos
     [SerializeField] Transform attackPoint;      // referência opcional para posicionar o ponto de ataque
     [SerializeField] AudioClip attackClip;
+    [SerializeField] AudioClip hurtClip;
     private PlayerStats _playerStats;
     float _lastAttackTime = -99f;
 
@@ -57,10 +61,15 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(float damage)
     {
         if (_isDead) return; // não recebe dano se estiver invencível ou morto
-
         damaging = true;                // começa invencibilidade temporária
         _playerStats.TakeDamage(damage); // aplica dano
         _anim.SetBool("Damage", true);   // inicia animação de dano
+        if (Time.time - _lastDamageSoundTime >= _damageSoundCooldown)
+        {
+            AudioSource.PlayClipAtPoint(hurtClip, transform.position);
+            _lastDamageSoundTime = Time.time;
+        }
+
 
         if (_playerStats.CurrentHealth <= 0)
         {
@@ -70,6 +79,8 @@ public class PlayerController : MonoBehaviour
             GetComponentInChildren<Collider2D>().enabled = false;
             _isDead = true;
             AudioSource.PlayClipAtPoint(deathClip, transform.position);
+            PlayerPrefs.DeleteKey("ITEM_Machado Giratório");
+            PlayerPrefs.Save();
             _anim.SetTrigger("Destroy");
             StartCoroutine(LoadSceneAfterDelay());
             return;
@@ -129,6 +140,7 @@ public class PlayerController : MonoBehaviour
     // Input System callback para ataque (Action type = Button)
     void OnAttack(InputValue value)
     {
+        Debug.Log("Machado level: " + PlayerPrefs.GetInt("ITEM_Machado Giratório", 0));
         if (_isDead) return;
         if (value.isPressed)
         {
