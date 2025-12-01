@@ -6,8 +6,9 @@ public class DropXP : MonoBehaviour
     private Transform _player;
 
     [SerializeField] private AudioClip pickupSound; // som ao pegar XP
-    [SerializeField] private int minXP = 5;  // XP mínimo
-    [SerializeField] private int maxXP = 20; // XP máximo
+    [SerializeField] private int baseMinXP = 5;  // XP mÃ­nimo base
+    [SerializeField] private int baseMaxXP = 15; // XP mÃ¡ximo base
+    [SerializeField] private float levelScaling = 0.5f; // XP cresce 50% por nÃ­vel do player
 
     private int xpValue;
 
@@ -21,11 +22,16 @@ public class DropXP : MonoBehaviour
             _playerStats = playerObj.GetComponent<PlayerStats>();
         }
 
-        // gerar valor aleatório de XP
-        xpValue = Random.Range(minXP, maxXP + 1);
+        // Escalar XP baseado no nÃ­vel do player
+        int playerLevel = _playerStats != null ? _playerStats.Level : 1;
+        int scaledMinXP = Mathf.RoundToInt(baseMinXP * (1 + (playerLevel - 1) * levelScaling));
+        int scaledMaxXP = Mathf.RoundToInt(baseMaxXP * (1 + (playerLevel - 1) * levelScaling));
+        
+        // gerar valor aleatÃ³rio de XP escalado
+        xpValue = Random.Range(scaledMinXP, scaledMaxXP + 1);
 
-        // ajustar escala proporcional ao XP
-        float scale = 1f + (xpValue - minXP) / (float)(maxXP - minXP); // escala entre 1 e 2
+        // ajustar escala visual proporcional ao XP
+        float scale = 1f + (xpValue - scaledMinXP) / Mathf.Max(1f, (float)(scaledMaxXP - scaledMinXP)); // escala entre 1 e 2
         transform.localScale = new Vector3(scale, scale, scale);
     }
 
@@ -43,7 +49,7 @@ public class DropXP : MonoBehaviour
         {
             _playerStats.GainXP(xpValue); // aplica XP
             AudioSource.PlayClipAtPoint(pickupSound, transform.position);
-            Destroy(gameObject);           // remove o drop após pegar
+            Destroy(gameObject);           // remove o drop apï¿½s pegar
         }
     }
 }

@@ -67,8 +67,10 @@ public class PlayerStats : MonoBehaviour
     // === VIDA ===
     public void TakeDamage(float damage)
     {
-        float realDamage = damage - (defense * damage /100); // reduz dano pela defesa
-        currentHealth -= realDamage;
+        // Fórmula melhorada: defesa tem retorno decrescente, evita redução excessiva
+        float damageReduction = defense / (defense + 50f); // máximo de ~50% de redução com defesa muito alta
+        float realDamage = damage * (1 - damageReduction);
+        currentHealth -= Mathf.Max(1f, realDamage); // sempre causa pelo menos 1 de dano
         UpdateUI();
 
     }
@@ -163,11 +165,11 @@ public class PlayerStats : MonoBehaviour
     private void LevelUp()
     {
         level++;
-        xpToNextLevel *= 1.25f; // aumenta XP necessária a cada nível
+        xpToNextLevel *= 1.15f; // aumenta XP necessária a cada nível (reduzido de 1.25 para progressão mais suave)
         _xpBar.levelUp(xpToNextLevel);
-        maxHealth += 10f;
-        attack += 2f;
-        defense += 1f;
+        maxHealth += 15f;  // aumentado de 10 para melhor progressão
+        attack += 3f;      // aumentado de 2 para melhor progressão
+        defense += 1.5f;   // aumentado de 1 para melhor progressão
         currentHealth = maxHealth;
 
         Debug.Log($"Subiu para o nível {level}!");

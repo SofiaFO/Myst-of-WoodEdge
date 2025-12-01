@@ -5,9 +5,10 @@ public class DropMoeda : MonoBehaviour
     private PlayerStats _playerStats;
     private Transform _player;
 
-    [SerializeField] private AudioClip pickupSound; // som ao pegar XP
-    [SerializeField] private int minCoin = 3;  // Coin mínimo
-    [SerializeField] private int maxCoin = 5; // Coin máximo
+    [SerializeField] private AudioClip pickupSound; // som ao pegar moeda
+    [SerializeField] private int baseMinCoin = 3;  // Moeda mÃ­nima base
+    [SerializeField] private int baseMaxCoin = 8; // Moeda mÃ¡xima base
+    [SerializeField] private float levelScaling = 0.5f; // Moedas crescem 50% por nÃ­vel do player
 
     private int coinValue;
 
@@ -21,8 +22,13 @@ public class DropMoeda : MonoBehaviour
             _playerStats = playerObj.GetComponent<PlayerStats>();
         }
 
-        // gerar valor aleatório de XP
-        coinValue = Random.Range(minCoin, maxCoin + 1);
+        // Escalar moedas baseado no nÃ­vel do player
+        int playerLevel = _playerStats != null ? _playerStats.Level : 1;
+        int scaledMinCoin = Mathf.RoundToInt(baseMinCoin * (1 + (playerLevel - 1) * levelScaling));
+        int scaledMaxCoin = Mathf.RoundToInt(baseMaxCoin * (1 + (playerLevel - 1) * levelScaling));
+        
+        // gerar valor aleatÃ³rio de moedas escalado
+        coinValue = Random.Range(scaledMinCoin, scaledMaxCoin + 1);
     }
 
     private void Update()
@@ -39,7 +45,7 @@ public class DropMoeda : MonoBehaviour
         {
             _playerStats.AddMoneyFromKill(coinValue); // aplica XP
             AudioSource.PlayClipAtPoint(pickupSound, transform.position);
-            Destroy(gameObject);           // remove o drop após pegar
+            Destroy(gameObject);           // remove o drop apï¿½s pegar
         }
     }
 }
