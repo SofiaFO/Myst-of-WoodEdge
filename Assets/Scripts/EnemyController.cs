@@ -129,8 +129,11 @@ public class EnemyController : MonoBehaviour
     {
         if (_isDead) return;
 
-        float finalDamage = Mathf.Max(1f, dmg - defense);
-        currentHealth -= finalDamage;
+        // Fórmula melhorada: defesa tem retorno decrescente, evita redução excessiva
+        float damageReduction = defense / (defense + 50f); // máximo de ~50% de redução com defesa muito alta
+        float realDamage = damage * (1 - damageReduction);
+        currentHealth -= Mathf.Max(1f, realDamage); // sempre causa pelo menos 1 de dano
+        damaging = true;
 
         damaging = true;
         if (_anim != null) _anim.SetBool("isDamage", true);
@@ -199,12 +202,23 @@ public class EnemyController : MonoBehaviour
         foreach (var c in GetComponents<Collider2D>())
             c.enabled = false;
 
-        float chance = Random.value;
+        // Sistema de drop melhorado: pode dropar ambos XP e moeda
+        float xpChance = 0.8f;   // 80% de chance de dropar XP
+        float coinChance = 0.4f; // 40% de chance de dropar moeda
 
-        if (chance < 0.7f)
+        // Dropar XP
+        if (Random.value < xpChance)
+        {
             Instantiate(xpPrefab, transform.position, Quaternion.identity);
-        else
-            Instantiate(moneyPrefab[Random.Range(0, moneyPrefab.Count)], transform.position, Quaternion.identity);
+        }
+
+        // Dropar moeda (independente do XP)
+        if (Random.value < coinChance)
+        {
+            int index = Random.Range(0, moneyPrefab.Count);
+            GameObject prefabToSpawn = moneyPrefab[index];
+            Instantiate(prefabToSpawn, transform.position, Quaternion.identity);
+        }
 
         StartCoroutine(DestroyAfterDelay(0.5f));
     }
