@@ -188,15 +188,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ad620839ff4cf8418d18a4b1524a16b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  maxHealth: 10
-  attack: 10
-  defense: 2
-  moveSpeed: 0.7
-  attackRange: 0.5
+  maxHealth: 40
+  attack: 7
+  defense: 1
+  moveSpeed: 1.5
+  attackRange: 0.9
   attackRate: 1.5
-  softPushForce: 4
-  autoNudgeForce: 1.5
-  playerSerie: {fileID: 0}
   attackClip: {fileID: 8300000, guid: 3981bb3c2fcab1e4fadef066e3969edc, type: 3}
   deathClip: {fileID: 8300000, guid: 1a63984c7c9ad2042a0805a1b8ab425e, type: 3}
   damageClip: {fileID: 8300000, guid: 50794635d53ee7e4a866b53099a25c6b, type: 3}

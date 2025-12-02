@@ -23,25 +23,29 @@ public class ToroidalLargeMapGenerator : MonoBehaviour
 
     private void GenerateLargeMap()
     {
-        // 1. Calcula tamanho total do mapa toroidal
         float totalWidth = singleMapWidth * gridX;
         float totalHeight = singleMapHeight * gridY;
 
-        // 2. Ajusta valores no TorusMap
         torusMap.mapWidth = totalWidth;
         torusMap.mapHeight = totalHeight;
 
         torusMap.halfWidth = totalWidth / 2f;
         torusMap.halfHeight = totalHeight / 2f;
 
-        // 3. Calcula ponto inicial (centro)
+        // 🟦 PRINTA OS LIMITES DO MAPA
+        Debug.Log("===== LIMITES DO MAPA TOROIDAL =====");
+        Debug.Log($"Min X = {-torusMap.halfWidth}");
+        Debug.Log($"Max X = { torusMap.halfWidth}");
+        Debug.Log($"Min Y = {-torusMap.halfHeight}");
+        Debug.Log($"Max Y = { torusMap.halfHeight}");
+        Debug.Log("====================================");
+
         Vector3 origin = new Vector3(
             -totalWidth / 2f + singleMapWidth / 2f,
             -totalHeight / 2f + singleMapHeight / 2f,
             0
         );
 
-        // 4. Instancia grade de mapas
         for (int y = 0; y < gridY; y++)
         {
             for (int x = 0; x < gridX; x++)

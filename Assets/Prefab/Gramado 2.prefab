@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6637889813600819946}
   - component: {fileID: 6771418746452163013}
   - component: {fileID: 7530282874549951773}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Arbusto
   m_TagString: Tronco
   m_Icon: {fileID: 0}

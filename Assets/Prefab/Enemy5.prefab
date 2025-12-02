@@ -80,7 +80,7 @@ SpriteRenderer:
   m_SortingLayerID: 163158239
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: -4331948892352828423, guid: d531c55c7f0e9d2409903e5ac3f54c2c, type: 3}
+  m_Sprite: {fileID: -2863241958341551144, guid: e406940acac199b4ca37381a41685e54, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -101,7 +101,7 @@ Animator:
   m_GameObject: {fileID: 186278870392465097}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 0750bfa1a8cb34c4a96148a6440ecbc8, type: 2}
+  m_Controller: {fileID: 9100000, guid: f6187037a7d067b42b70978d42680dca, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -127,7 +127,7 @@ GameObject:
   - component: {fileID: 5000109822456322585}
   - component: {fileID: 3725499753358158504}
   m_Layer: 7
-  m_Name: Enemy3
+  m_Name: Enemy5
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -188,12 +188,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ad620839ff4cf8418d18a4b1524a16b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  maxHealth: 75
-  attack: 15
-  defense: 1
-  moveSpeed: 1.5
-  attackRange: 1.2
-  attackRate: 1.2
+  maxHealth: 35
+  attack: 8
+  defense: 2
+  moveSpeed: 1
+  attackRange: 0.8
+  attackRate: 0.8
   attackClip: {fileID: 8300000, guid: 3981bb3c2fcab1e4fadef066e3969edc, type: 3}
   deathClip: {fileID: 8300000, guid: 1a63984c7c9ad2042a0805a1b8ab425e, type: 3}
   damageClip: {fileID: 8300000, guid: 50794635d53ee7e4a866b53099a25c6b, type: 3}
@@ -234,7 +234,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0038650036, y: -0.017066866}
+  m_Offset: {x: -0.0038651228, y: -0.017066866}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -244,7 +244,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.2693708, y: 1.5584295}
+  m_Size: {x: 1.147275, y: 1.5014513}
   m_EdgeRadius: 0
 --- !u!61 &3725499753358158504
 BoxCollider2D:
