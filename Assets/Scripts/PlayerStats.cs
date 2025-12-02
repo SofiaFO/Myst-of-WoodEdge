@@ -15,10 +15,17 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private float defense;
     [SerializeField] private int level = 1;
     [SerializeField] private float currentXP = 0f;
-    [SerializeField] private float xpToNextLevel = 100f;
+    [SerializeField] private float xpToNextLevel = 10f;
     [SerializeField] private int money = 0;
     [SerializeField] private float moneyMultiplier;
     private XpBar _xpBar;
+    ItemRandomScript1 itemRandom1;
+    ItemRandomScript2 itemRandom2;
+    ItemRandomScript3 itemRandom3;
+    GameObject Card1;
+    GameObject Card2;
+    GameObject Card3;
+    GameObject CardUI;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     private float currentHealth;
@@ -31,16 +38,31 @@ public class PlayerStats : MonoBehaviour
 
     public event Action OnDeath; // para PlayerController reagir quando morrer
 
+    public static PlayerStats Instance;
+
     private void Awake()
     {
+        CardUI = GameObject.FindWithTag("CardUI");
+        Card1 = GameObject.FindWithTag("Card1");
+        Card2 = GameObject.FindWithTag("Card2");
+        Card3 = GameObject.FindWithTag("Card3");
+        if (CardUI != null)
+            CardUI.SetActive(false);
         PlayerStats[] players = FindObjectsOfType<PlayerStats>();
         if (players.Length > 1)
+        // Singleton seguro
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
         _xpBar = FindObjectOfType<XpBar>();
 
+        // Health
         if (!PlayerPrefs.HasKey("PlayerHealth"))
             PlayerPrefs.SetFloat("PlayerHealth", 100f);
         maxHealth = PlayerPrefs.GetFloat("PlayerHealth");
@@ -54,8 +76,10 @@ public class PlayerStats : MonoBehaviour
         if (!PlayerPrefs.HasKey("PlayerMoneyMultiplier"))
             PlayerPrefs.SetFloat("PlayerMoneyMultiplier", 1f);
         moneyMultiplier = PlayerPrefs.GetFloat("PlayerMoneyMultiplier");
-        PlayerPrefs.Save(); // garante que qualquer valor padrão criado seja persistido
+
+        PlayerPrefs.Save();
     }
+
 
 
     void Start()
@@ -171,6 +195,15 @@ public class PlayerStats : MonoBehaviour
         attack += 3f;      // aumentado de 2 para melhor progressão
         defense += 1.5f;   // aumentado de 1 para melhor progressão
         currentHealth = maxHealth;
+        Time.timeScale = 0f;
+        Physics2D.simulationMode = SimulationMode2D.Script;
+        CardUI.SetActive(true);
+        itemRandom1 = Card1.GetComponent<ItemRandomScript1>();
+        itemRandom2 = Card2.GetComponent<ItemRandomScript2>();
+        itemRandom3 = Card3.GetComponent<ItemRandomScript3>();
+        itemRandom1.DrawRandomItem();
+        itemRandom2.DrawRandomItem();
+        itemRandom3.DrawRandomItem();
 
         Debug.Log($"Subiu para o nível {level}!");
     }

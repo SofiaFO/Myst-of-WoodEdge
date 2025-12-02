@@ -14,28 +14,29 @@ public class EnemyController : MonoBehaviour
 
     private float currentHealth;
     private float lastAttackTime = 0f;
+
     private Rigidbody2D _rb;
     private Transform _player;
-    [SerializeField] private GameObject playerSerie; // arrasta o Player aqui no Inspecto
     private PlayerStats _playerStats;
+
     private Animator _anim;
     private Collider2D _collider;
-    private bool damaging = false;
     private SpriteRenderer _spriteRenderer;
 
-
-    [SerializeField] private GameObject xpPrefab;
-    [SerializeField] private List <GameObject> moneyPrefab;
-
+    private bool touchingPlayer = false;
+    private bool damaging = false;
     private bool _isDead = false;
+
     private bool isKnockback = false;
-    private float knockbackDuration = 0.2f; // tempo de empurrão
+    private float knockbackDuration = 0.2f;
 
     [SerializeField] private AudioClip attackClip;
     [SerializeField] private AudioClip deathClip;
     [SerializeField] private AudioClip damageClip;
 
-    // Rastreia quais ataques já atingiram o inimigo
+    [SerializeField] private GameObject xpPrefab;
+    [SerializeField] private List<GameObject> moneyPrefab;
+
     private HashSet<Collider2D> alreadyHit = new HashSet<Collider2D>();
 
     private void Awake()
@@ -44,89 +45,87 @@ public class EnemyController : MonoBehaviour
         _anim = GetComponentInChildren<Animator>();
         _collider = GetComponent<Collider2D>();
         _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
+        _rb.freezeRotation = true;
+        _rb.mass = 0.1f;
     }
 
     private void Start()
     {
         currentHealth = maxHealth;
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
 
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
             _player = playerObj.transform;
             _playerStats = playerObj.GetComponent<PlayerStats>();
         }
-        else
-        {
-            if (playerSerie != null)
-            {
-                _player = playerSerie.transform;
-                _playerStats = playerSerie.GetComponent<PlayerStats>();
-            }
-            else
-            {
-                Debug.LogError("Player não atribuído no Inspector!");
-            }
-        }
     }
 
     private void Update()
     {
-        if (_isDead) return;
+        if (_isDead || _player == null) return;
 
-        if (_player == null)
+        float distance = Vector2.Distance(_player.position, transform.position);
+
+        if (!touchingPlayer)
         {
-            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj != null)
-            {
-                _player = playerObj.transform;
-                _playerStats = playerObj.GetComponent<PlayerStats>();
-                print("Player encontrado na cena.");
-            }
+            if (distance > attackRange)
+                FollowPlayer();
             else
-            {
-                // Nenhum player na cena, inimigo fica parado
-                _rb.linearVelocity = Vector2.zero;
-                print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-                return;
-            }
+                TryAttack();
         }
-
-        if (_collider == null) return;
-        float distance = Vector2.Distance((Vector2)_player.position, (Vector2)_collider.bounds.center);
-
-        if (distance > attackRange)
-            FollowPlayer();
         else
-            TryAttack();
+        {
+            _rb.linearVelocity = Vector2.zero;
+        }
     }
-    
+
     private void Flipar(Vector2 direction)
     {
         if (direction.x != 0)
             _spriteRenderer.flipX = direction.x > 0;
     }
 
+    // ============================================================
+    //                INIMIGO SEGUE O PLAYER
+    // ============================================================
+
     private void FollowPlayer()
     {
         if (_isDead || isKnockback) return;
 
-        Vector2 direction = ((Vector2)_player.position - (Vector2)_collider.bounds.center).normalized;
-        _rb.linearVelocity = direction * moveSpeed;
+        Vector2 dir = (_player.position - transform.position).normalized;
 
-        Flipar(direction);
+        _rb.linearVelocity = dir * moveSpeed;
+        Flipar(dir);
     }
+
+    // ============================================================
+    //                   ATAQUE AO PLAYER
+    // ============================================================
 
     private void TryAttack()
     {
         _rb.linearVelocity = Vector2.zero;
 
         if (Time.time - lastAttackTime < attackRate) return;
-
         lastAttackTime = Time.time;
+
+        if (_anim) _anim.SetTrigger("Attack");
+
+        if (attackClip != null)
+            AudioSource.PlayClipAtPoint(attackClip, transform.position);
+
+        if (_playerStats != null)
+            _playerStats.TakeDamage(attack);
     }
 
-    public void TakeDamage(float damage)
+    // ============================================================
+    //                    TOMAR DANO + KNOCKBACK
+    // ============================================================
+
+    public void TakeDamage(float dmg)
     {
         if (_isDead) return;
 
@@ -136,56 +135,69 @@ public class EnemyController : MonoBehaviour
         currentHealth -= Mathf.Max(1f, realDamage); // sempre causa pelo menos 1 de dano
         damaging = true;
 
-        _anim.SetBool("isDamage", true);
+        damaging = true;
+        if (_anim != null) _anim.SetBool("isDamage", true);
+        if (damageClip) AudioSource.PlayClipAtPoint(damageClip, transform.position);
 
-        AudioSource.PlayClipAtPoint(damageClip, transform.position);
         Vector2 knockDir = ((Vector2)transform.position - (Vector2)_player.position).normalized;
-        float knockForce = 5f;
-        StartCoroutine(DoKnockback(knockDir, knockForce));
+        StartCoroutine(DoKnockback(knockDir, 0.8f));
 
         if (currentHealth <= 0)
             Die();
     }
 
-    private IEnumerator DoKnockback(Vector2 direction, float force)
+    private IEnumerator DoKnockback(Vector2 dir, float force)
     {
         isKnockback = true;
         _rb.linearVelocity = Vector2.zero;
-        _rb.AddForce(direction * force, ForceMode2D.Impulse);
+
+        _rb.AddForce(dir * force, ForceMode2D.Impulse);
+
         yield return new WaitForSeconds(knockbackDuration);
+
         isKnockback = false;
-        _anim.SetBool("isDamage", false);
         damaging = false;
+
+        if (_anim != null) _anim.SetBool("isDamage", false);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Attack") && _playerStats != null && !alreadyHit.Contains(collision))
-        {
-            alreadyHit.Add(collision); // marca que este ataque já causou dano
-            TakeDamage(_playerStats.GetAttack());
-        }
+        if (!collision.CompareTag("Attack")) return;
+
+        if (!alreadyHit.Add(collision)) return;
+
+        float dmg = _playerStats.GetAttack();
+        TakeDamage(dmg);
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    // ============================================================
+    //                        COLISÃO PLAYER
+    // ============================================================
+
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.CompareTag("Attack") && alreadyHit.Contains(collision))
-        {
-            alreadyHit.Remove(collision); // permite que o ataque cause dano novamente se colidir futuramente
-        }
-
-        if (collision.CompareTag("Player")){
-            AudioSource.PlayClipAtPoint(attackClip, transform.position);
-        }
+        if (collision.collider.CompareTag("Player"))
+            touchingPlayer = true;
     }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Player"))
+            touchingPlayer = false;
+    }
+
+    // ============================================================
+    //                           MORTE
+    // ============================================================
 
     private void Die()
     {
         _isDead = true;
         _rb.linearVelocity = Vector2.zero;
 
-        if (_anim != null) _anim.SetTrigger("Destroy");
-        if (deathClip != null) AudioSource.PlayClipAtPoint(deathClip, transform.position);
+        if (_anim) _anim.SetTrigger("Destroy");
+        if (deathClip) AudioSource.PlayClipAtPoint(deathClip, transform.position);
 
         foreach (var c in GetComponents<Collider2D>())
             c.enabled = false;
@@ -211,15 +223,9 @@ public class EnemyController : MonoBehaviour
         StartCoroutine(DestroyAfterDelay(0.5f));
     }
 
-    private IEnumerator DestroyAfterDelay(float delay)
+    private IEnumerator DestroyAfterDelay(float t)
     {
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSeconds(t);
         Destroy(gameObject);
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }
