@@ -188,25 +188,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ad620839ff4cf8418d18a4b1524a16b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  maxHealth: 20
-  attack: 10
-  defense: 2
-  moveSpeed: 0.9
-  attackRange: 0.5
-  attackRate: 1.5
-  softPushForce: 4
-  autoNudgeForce: 1.5
-  playerSerie: {fileID: 0}
+  maxHealth: 85
+  attack: 20
+  defense: 6
+  moveSpeed: 1
+  attackRange: 2.5
+  attackRate: 0.5
   attackClip: {fileID: 8300000, guid: 3981bb3c2fcab1e4fadef066e3969edc, type: 3}
   deathClip: {fileID: 8300000, guid: 1a63984c7c9ad2042a0805a1b8ab425e, type: 3}
   damageClip: {fileID: 8300000, guid: 50794635d53ee7e4a866b53099a25c6b, type: 3}
   xpPrefab: {fileID: 9109268181781645753, guid: 1c7b54252abbfb64e88743e9b9ba9221, type: 3}
   moneyPrefab:
   - {fileID: 7247690582762657747, guid: 2b6c77ece60495747965d17d1325f0f3, type: 3}
-  obstacleDetectionDistance: 1.5
-  sideRayDistance: 1
-  stuckCheckTime: 0.5
-  minMovementThreshold: 0.1
 --- !u!61 &5000109822456322585
 BoxCollider2D:
   m_ObjectHideFlags: 0

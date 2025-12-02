@@ -1270,7 +1270,7 @@ GameObject:
   - component: {fileID: 4012074009580799845}
   - component: {fileID: 6868620348889673589}
   - component: {fileID: 5625354631603601193}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Troncos e pedras
   m_TagString: Tronco
   m_Icon: {fileID: 0}

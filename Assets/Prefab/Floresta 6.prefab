@@ -1541,7 +1541,7 @@ GameObject:
   - component: {fileID: 7101436571391560315}
   - component: {fileID: 6292136661115461340}
   - component: {fileID: 4272548062242579589}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Tronco
   m_TagString: Tronco
   m_Icon: {fileID: 0}

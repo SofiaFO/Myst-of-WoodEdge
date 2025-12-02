@@ -10829,7 +10829,7 @@ GameObject:
   - component: {fileID: 3840787613151891392}
   - component: {fileID: 5061161946550531086}
   - component: {fileID: 8400518166532301776}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Pedras
   m_TagString: Tronco
   m_Icon: {fileID: 0}

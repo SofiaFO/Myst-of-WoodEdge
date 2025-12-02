@@ -11849,7 +11849,7 @@ GameObject:
   - component: {fileID: 5023745830227949691}
   - component: {fileID: 8272687558295807971}
   - component: {fileID: 2627980766408382373}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Tronco
   m_TagString: Tronco
   m_Icon: {fileID: 0}
