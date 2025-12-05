@@ -125,7 +125,7 @@ public class EnemyController : MonoBehaviour
     //                    TOMAR DANO + KNOCKBACK
     // ============================================================
 
-    public void TakeDamage(float dmg)
+    public void TakeDamage(float damage)
     {
         if (_isDead) return;
 

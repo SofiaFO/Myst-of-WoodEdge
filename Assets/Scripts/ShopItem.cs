@@ -9,5 +9,5 @@ public class ShopItem
     public ItemType type;
     public Button buyButton;
     
-    public enum ItemType { Vida, Ataque, Defesa, BonusDinheiro }
+    public enum ItemType { Vida, Ataque, Defesa, BonusDinheiro, MoveSpeed, AttackDamage, AttackSpeed }
 }

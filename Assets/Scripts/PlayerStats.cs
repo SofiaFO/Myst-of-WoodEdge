@@ -42,14 +42,25 @@ public class PlayerStats : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log("🟦 [PlayerStats] Awake iniciado.");
+
         CardUI = GameObject.FindWithTag("CardUI");
         Card1 = GameObject.FindWithTag("Card1");
         Card2 = GameObject.FindWithTag("Card2");
         Card3 = GameObject.FindWithTag("Card3");
+
+        Debug.Log($"🟩 CardUI encontrado? {CardUI != null}");
+        Debug.Log($"🟩 Card1 encontrado? {Card1 != null}");
+        Debug.Log($"🟩 Card2 encontrado? {Card2 != null}");
+        Debug.Log($"🟩 Card3 encontrado? {Card3 != null}");
+
         if (CardUI != null)
             CardUI.SetActive(false);
+
+        // Singleton
         PlayerStats[] players = FindObjectsOfType<PlayerStats>();
         if (players.Length > 1)
+            Debug.LogError("❌ Mais de um PlayerStats encontrado na cena!");
         // Singleton seguro
         if (Instance != null && Instance != this)
         {
@@ -188,24 +199,64 @@ public class PlayerStats : MonoBehaviour
 
     private void LevelUp()
     {
-        level++;
-        xpToNextLevel *= 1.15f; // aumenta XP necessária a cada nível (reduzido de 1.25 para progressão mais suave)
-        _xpBar.levelUp(xpToNextLevel);
-        maxHealth += 15f;  // aumentado de 10 para melhor progressão
-        attack += 3f;      // aumentado de 2 para melhor progressão
-        defense += 1.5f;   // aumentado de 1 para melhor progressão
-        currentHealth = maxHealth;
-        Time.timeScale = 0f;
-        Physics2D.simulationMode = SimulationMode2D.Script;
-        CardUI.SetActive(true);
-        itemRandom1 = Card1.GetComponent<ItemRandomScript1>();
-        itemRandom2 = Card2.GetComponent<ItemRandomScript2>();
-        itemRandom3 = Card3.GetComponent<ItemRandomScript3>();
-        itemRandom1.DrawRandomItem();
-        itemRandom2.DrawRandomItem();
-        itemRandom3.DrawRandomItem();
+        Debug.Log("🟦 [PlayerStats] Entrou em LevelUp()");
 
-        Debug.Log($"Subiu para o nível {level}!");
+        level++;
+        xpToNextLevel *= 1.15f;
+        _xpBar.levelUp(xpToNextLevel);
+
+        maxHealth += 15f;
+        attack += 3f;
+        defense += 1.5f;
+        currentHealth = maxHealth;
+
+        // Ativa UI
+        Debug.Log("🟨 Ativando CardUI...");
+        if (CardUI == null)
+            Debug.LogError("❌ CardUI está NULL no LevelUp!");
+        else
+            CardUI.SetActive(true);
+
+        // Verificando Cards
+        Debug.Log($"🟩 Card1 é null? {Card1 == null}");
+        Debug.Log($"🟩 Card2 é null? {Card2 == null}");
+        Debug.Log($"🟩 Card3 é null? {Card3 == null}");
+
+        // GetComponent com logs
+        Debug.Log("🔍 Pegando ItemRandomScript1...");
+        if (Card1 == null)
+            Debug.LogError("❌ Card1 está null antes do GetComponent!");
+
+        itemRandom1 = Card1?.GetComponent<ItemRandomScript1>();
+        Debug.Log($"🔎 itemRandom1 encontrado? {itemRandom1 != null}");
+
+        Debug.Log("🔍 Pegando ItemRandomScript2...");
+        if (Card2 == null)
+            Debug.LogError("❌ Card2 está null antes do GetComponent!");
+
+        itemRandom2 = Card2?.GetComponent<ItemRandomScript2>();
+        Debug.Log($"🔎 itemRandom2 encontrado? {itemRandom2 != null}");
+
+        Debug.Log("🔍 Pegando ItemRandomScript3...");
+        if (Card3 == null)
+            Debug.LogError("❌ Card3 está null antes do GetComponent!");
+
+        itemRandom3 = Card3?.GetComponent<ItemRandomScript3>();
+        Debug.Log($"🔎 itemRandom3 encontrado? {itemRandom3 != null}");
+
+        // Agora tentando sortear
+        Debug.Log("🎲 Tentando DrawRandomItem nos 3 cards...");
+
+        if (itemRandom1 == null) Debug.LogError("❌ itemRandom1 está NULL!");
+        else itemRandom1.DrawRandomItem();
+
+        if (itemRandom2 == null) Debug.LogError("❌ itemRandom2 está NULL!");
+        else itemRandom2.DrawRandomItem();
+
+        if (itemRandom3 == null) Debug.LogError("❌ itemRandom3 está NULL!");
+        else itemRandom3.DrawRandomItem();
+
+        Debug.Log($"🎉 Subiu para o nível {level}!");
     }
 
     // === DINHEIRO ===

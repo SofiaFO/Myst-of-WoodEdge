@@ -34,6 +34,10 @@ public class PlayerController : MonoBehaviour
     float _lastAttackTime = -99f;
 
     bool _isDead = false;
+    
+    float baseMoveSpeed;
+    float baseAttackDamage;
+    float baseAttackRate;
 
     void Awake()
     {
@@ -48,7 +52,28 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         _anim.SetBool("isWalking", false);
+
+        // Salva valores base para multiplicar depois
+        baseMoveSpeed = moveSpeed;
+        baseAttackDamage = attackDamage;
+        baseAttackRate = attackRate;
+
+        // ====== CARREGAR UPGRADES DA LOJA ======
+
+        // Velocidade extra (ex: vai crescendo de 0.1, 0.2, 0.3...)
+        float moveBonus = PlayerPrefs.GetFloat("PlayerMoveSpeedBonus", 0f);
+        moveSpeed = baseMoveSpeed + moveBonus;
+
+        // Dano extra (ex: +1, +2...)
+        float damageBonus = PlayerPrefs.GetFloat("PlayerDamageBonus", 0f);
+        attackDamage = baseAttackDamage + damageBonus;
+
+        // Attack Speed (quanto menor, mais rápido o ataque)
+        float atkSpeedBonus = PlayerPrefs.GetFloat("PlayerAttackSpeedBonus", 0f);
+        attackRate = Mathf.Max(0.15f, baseAttackRate - atkSpeedBonus); 
+        // limite mínimo para evitar quebrar o jogo
     }
+
 
     void OnTriggerStay2D(Collider2D collision)
     {

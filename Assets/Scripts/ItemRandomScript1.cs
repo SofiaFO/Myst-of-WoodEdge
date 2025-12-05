@@ -115,6 +115,12 @@ public class ItemRandomScript1 : MonoBehaviour
         {
             case "Machado Giratório":
                 return "Aumenta o dano e a velocidade do machado.";
+            
+            case "Folhas Giratórias":
+                return "Aumenta quantidade de folhas, velocidade e dano.";
+            
+            case "Bola de Fogo":
+                return "Aumenta a velocidade da bola de fogo";
         }
 
         return "Upgrade aplicado.";
@@ -129,6 +135,14 @@ public class ItemRandomScript1 : MonoBehaviour
         {
             case "Machado Giratório":
                 itemPrefabs[lastIndex].GetComponent<MachadoGir>().Upgrade();
+                break;
+            
+            case "Folhas Giratórias":
+                itemPrefabs[lastIndex].GetComponent<FolhasMaster>().Upgrade();
+                break;
+            
+            case "Bola de Fogo":
+                itemPrefabs[lastIndex].GetComponent<FireballShooter>().Upgrade();
                 break;
         }
     }
