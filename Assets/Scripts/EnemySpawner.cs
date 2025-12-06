@@ -48,6 +48,7 @@ public class EnemySpawner : MonoBehaviour
     private int currentEnemyTier = 0;
     private int difficultyLevel = 0; // Contador de quantas vezes a dificuldade aumentou
     private List<GameObject> enemies = new List<GameObject>();
+    private bool isSpawningEnabled = true; // NOVO: controla se o spawn está ativo
 
     void Awake()
     {
@@ -192,7 +193,6 @@ public class EnemySpawner : MonoBehaviour
 
         Vector2 dir = raw.normalized;
         float dist = Random.Range(minDist, maxDist);
-
         Vector3 spawnPos = player.position + new Vector3(dir.x, dir.y, 0) * dist;
 
         return spawnPos;

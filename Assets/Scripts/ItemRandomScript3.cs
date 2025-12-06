@@ -6,15 +6,15 @@ using TMPro;
 public class ItemRandomScript3 : MonoBehaviour
 {
     [Header("Referências do UI")]
-    public TextMeshProUGUI titleText;
-    public TextMeshProUGUI descriptionText;
-    public Image iconImage;
-
-    [Header("Objetos que serão ativados/upgrade")]
-    public List<GameObject> itemPrefabs;
+    [SerializeField] private TextMeshProUGUI titleText;
+    [SerializeField] private TextMeshProUGUI descriptionText;
+    [SerializeField] private Image iconImage;
+    PlayerStats playerStats;
+    PlayerController playerController;
 
     [Header("Banco de Itens")]
-    public List<string> itemTitles = new List<string>()
+    [SerializeField]
+    private List<string> itemTitles = new List<string>()
     {
         "Machado Giratório",
         "Cajado Solar"
@@ -34,8 +34,17 @@ public class ItemRandomScript3 : MonoBehaviour
     void Awake()
     {
         CardUI = GameObject.FindWithTag("CardUI");
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player != null)
+        {
+            playerStats = player.GetComponent<PlayerStats>();
+        }
+        playerController = player.GetComponent<PlayerController>();
     }
 
+    // -----------------------------------------------------------
+    // SORTEAR ITEM E APLICAR NO UI
+    // -----------------------------------------------------------
     public void DrawRandomItem()
     {
         lastIndex = Random.Range(0, itemTitles.Count);
@@ -57,10 +66,12 @@ public class ItemRandomScript3 : MonoBehaviour
         {
             ApplyUpgrade(itemTitles[lastIndex]);
         }
-        else
-        {
-            ActivateItem(itemTitles[lastIndex]);
-        }
+
+        // Se ainda não tem → ativar primeira vez
+        PlayerPrefs.SetInt($"ITEM_{itemName}", 1);
+        PlayerPrefs.Save();
+
+        // Tenta achar objeto existente
 
         CloseCardUI();
     }
@@ -86,11 +97,14 @@ public class ItemRandomScript3 : MonoBehaviour
 
         switch (itemName)
         {
-            case "Machado Giratório":
-                obj.GetComponent<MachadoGir>().Upgrade();
+            case "Poção de Cura":
+                playerStats.Heal(playerStats.GetHealth()/2);
                 break;
-
-            case "Cajado Solar":
+            case "Armadura Medieval":
+                playerStats.IncreaseDefense(4);
+                break;
+            case "Chapéu mágico":
+                playerController.UpgradeAttack();
                 break;
         }
     }
@@ -103,8 +117,20 @@ public class ItemRandomScript3 : MonoBehaviour
 
     private void CloseCardUI()
     {
+
+        // Chama a função de transição da câmera no PlayerStats
+        if (PlayerStats.Instance != null)
+        {
+            PlayerStats.Instance.StartCameraTransition();
+        }
+        else
+        {
+            // Fallback caso não encontre o PlayerStats
+            Time.timeScale = 1f;
+            Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
+        }
+
+
         CardUI.SetActive(false);
-        Time.timeScale = 1f;
-        Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
     }
 }

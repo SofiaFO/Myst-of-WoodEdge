@@ -70,7 +70,14 @@ public class ItemRandomScript2 : MonoBehaviour
 
         switch (itemName)
         {
-            case "Machado Giratório":
+            case "Varinha Mágica":
+                return "Aumenta o dano da magia.";
+                break;
+            case "Colar Estelar":
+                return "Aumenta a quantidade de estrelas geradas.";
+                break;
+            case "Botas Chamariz":
+                return "Aumenta a duração e dano do efeito das botas.";
                 break;
         }
     }
@@ -81,8 +88,14 @@ public class ItemRandomScript2 : MonoBehaviour
 
         switch (itemName)
         {
-            case "Machado Giratório":
-                obj.GetComponent<MachadoGir>().Upgrade();
+            case "Varinha Mágica":
+                itemPrefabs[lastIndex].GetComponent<LaserSpawner>().Upgrade();
+                break;
+            case "Colar Estelar":
+                itemPrefabs[lastIndex].GetComponent<StarSpawner>().Upgrade();
+                break;
+            case "Botas Chamariz":
+                itemPrefabs[lastIndex].GetComponent<AreaSpawner>().Upgrade();
                 break;
         }
     }
@@ -95,8 +108,20 @@ public class ItemRandomScript2 : MonoBehaviour
 
     private void CloseCardUI()
     {
+
+        // Chama a função de transição da câmera no PlayerStats
+        if (PlayerStats.Instance != null)
+        {
+            PlayerStats.Instance.StartCameraTransition();
+        }
+        else
+        {
+            // Fallback caso não encontre o PlayerStats
+            Time.timeScale = 1f;
+            Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
+        }
+
+
         CardUI.SetActive(false);
-        Time.timeScale = 1f;
-        Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
     }
 }

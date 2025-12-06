@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class PlayerStats : MonoBehaviour
 {
@@ -13,10 +15,16 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private float xpToNextLevel = 10f;
     [SerializeField] private int money = 0;
     [SerializeField] private float moneyMultiplier;
+    [SerializeField] private AudioClip bossClip;
+    [SerializeField] private AudioClip battleClip;
 
-    [Header("Progressão de XP")]
-    [Tooltip("Multiplicador de XP a cada nível (1.20 = 20% a mais, 1.30 = 30% a mais)")]
-    [SerializeField] private float xpScalingPerLevel = 1.3f; // 🔥 Aumentado de 1.15 para 1.25
+    [Header("Sistema de Câmera")]
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private GameObject cinemachineVirtualCamera; // Arraste aqui a CM vcam1
+    [SerializeField] private Vector3 targetCameraPosition = new Vector3(-0.34f, 5.04f, -10f);
+    [SerializeField] private float cameraTransitionDuration = 1.5f;
+    [SerializeField] private GameObject objectsParent; // Prefab/objeto pai com vários filhos
+    [SerializeField] private int objectsToDisable = 2;
 
     private XpBar _xpBar;
     ItemRandomScript1 itemRandom1;
@@ -29,10 +37,12 @@ public class PlayerStats : MonoBehaviour
     GameObject CardUI;
 
     private float currentHealth;
+    private Vector3 originalCameraPosition;
+    private bool isCameraTransitioning = false;
 
     [Header("Referências de UI (opcional)")]
     [SerializeField] private Slider healthBar;
-    [SerializeField] private Text levelText;
+    [SerializeField] private TMP_Text levelText;
     [SerializeField] private Text xpText;
     [SerializeField] private Text moneyText;
 
@@ -52,24 +62,30 @@ public class PlayerStats : MonoBehaviour
         if (CardUI != null)
             CardUI.SetActive(false);
 
-        // Singleton
         PlayerStats[] players = FindObjectsOfType<PlayerStats>();
         if (players.Length > 1)
-            Debug.LogError("❌ Mais de um PlayerStats encontrado na cena!");
-
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
+            // Singleton seguro
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
         _xpBar = FindObjectOfType<XpBar>();
 
-        // PlayerPrefs load
-        if (!PlayerPrefs.HasKey("PlayerHealth")) PlayerPrefs.SetFloat("PlayerHealth", 100f);
+        // Camera setup
+        if (mainCamera == null)
+            mainCamera = Camera.main;
+
+        if (mainCamera != null)
+            originalCameraPosition = mainCamera.transform.position;
+
+        // Health
+        if (!PlayerPrefs.HasKey("PlayerHealth"))
+            PlayerPrefs.SetFloat("PlayerHealth", 100f);
         maxHealth = PlayerPrefs.GetFloat("PlayerHealth");
 
         if (!PlayerPrefs.HasKey("PlayerDefense")) PlayerPrefs.SetFloat("PlayerDefense", 5f);
@@ -90,9 +106,8 @@ public class PlayerStats : MonoBehaviour
     // === VIDA ===
     public void TakeDamage(float damage)
     {
-        float damageReduction = defense / (defense + 50f);
-        float realDamage = damage * (1 - damageReduction);
-        currentHealth -= Mathf.Max(1f, realDamage);
+        float realDamage = damage - (defense * damage / 100); // reduz dano pela defesa
+        currentHealth -= realDamage;
         UpdateUI();
     }
 
@@ -179,19 +194,9 @@ public class PlayerStats : MonoBehaviour
         Debug.Log($"📊 Nível {level} | XP necessário: {xpToNextLevel:F0} (x{xpScalingPerLevel})");
         
         _xpBar.levelUp(xpToNextLevel);
-
-        maxHealth += 15f;
-        attack += 3f;
-        defense += 1.5f;
-        currentHealth = maxHealth;
-
-        // Mostra cartas
-        if (CardUI != null)
-            CardUI.SetActive(true);
-        else
-            Debug.LogError("❌ CardUI está NULL no LevelUp!");
-
-        // 🛑 PAUSA O JOGO AQUI
+        maxHealth += 10f;
+        attack += 2f;
+        defense += 1f;
         Time.timeScale = 0f;
 
         // Pega scripts dos cards
@@ -203,7 +208,157 @@ public class PlayerStats : MonoBehaviour
         itemRandom2?.DrawRandomItem();
         itemRandom3?.DrawRandomItem();
 
-        Debug.Log($"🎉 Subiu para o nível {level}!");
+        Debug.Log($"Subiu para o nível {level}!");
+    }
+
+    // === SISTEMA DE CÂMERA E DESATIVAÇÃO DE OBJETOS ===
+    public void StartCameraTransition()
+    {
+        if(level < 11)
+            StartCoroutine(CameraTransitionSequence());
+        else
+            UnpauseGame();
+    }
+
+    private IEnumerator CameraTransitionSequence()
+    {
+        if (isCameraTransitioning)
+        {
+            UnpauseGame();
+            yield break;
+        }
+
+        // Verifica e pega a câmera novamente se necessário
+        if (mainCamera == null)
+        {
+            mainCamera = Camera.main;
+            if (mainCamera == null)
+            {
+                Debug.LogError("Câmera principal não encontrada!");
+                UnpauseGame();
+                yield break;
+            }
+        }
+
+        isCameraTransitioning = true;
+
+        // DESATIVA O CINEMACHINE TEMPORARIAMENTE
+        bool cinemachineWasActive = false;
+        if (cinemachineVirtualCamera != null)
+        {
+            cinemachineWasActive = cinemachineVirtualCamera.activeSelf;
+            cinemachineVirtualCamera.SetActive(false);
+            Debug.Log("Cinemachine desativado");
+        }
+
+        // Salva posição original da câmera
+        originalCameraPosition = mainCamera.transform.position;
+
+        Debug.Log($"Iniciando transição da câmera de {originalCameraPosition} para {targetCameraPosition}");
+
+        // Move a câmera para a posição alvo
+        float elapsed = 0f;
+        Vector3 startPos = originalCameraPosition;
+
+        while (elapsed < cameraTransitionDuration)
+        {
+            elapsed += Time.unscaledDeltaTime; // Usa unscaled para funcionar com Time.timeScale = 0
+            float t = elapsed / cameraTransitionDuration;
+
+            // Suavização com ease in-out
+            t = t * t * (3f - 2f * t);
+
+            mainCamera.transform.position = Vector3.Lerp(startPos, targetCameraPosition, t);
+            yield return null;
+        }
+
+        mainCamera.transform.position = targetCameraPosition;
+        Debug.Log($"Câmera chegou em {mainCamera.transform.position}");
+
+        // Desativa objetos aleatórios
+        DisableRandomObjects();
+
+        // Pequena pausa para mostrar o resultado
+        yield return new WaitForSecondsRealtime(1.5f);
+
+        // Volta a câmera para a posição original
+        Debug.Log($"Voltando câmera para {originalCameraPosition}");
+        elapsed = 0f;
+        startPos = mainCamera.transform.position;
+
+        while (elapsed < cameraTransitionDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = elapsed / cameraTransitionDuration;
+            t = t * t * (3f - 2f * t);
+
+            mainCamera.transform.position = Vector3.Lerp(startPos, originalCameraPosition, t);
+            yield return null;
+        }
+
+        mainCamera.transform.position = originalCameraPosition;
+        Debug.Log($"Câmera voltou para {mainCamera.transform.position}");
+
+        // REATIVA O CINEMACHINE
+        if (cinemachineVirtualCamera != null && cinemachineWasActive)
+        {
+            cinemachineVirtualCamera.SetActive(true);
+            Debug.Log("Cinemachine reativado");
+        }
+
+        // AGORA SIM despausa o jogo (só depois de tudo)
+        UnpauseGame();
+
+        isCameraTransitioning = false;
+    }
+
+    private void DisableRandomObjects()
+    {
+        if (objectsParent == null)
+        {
+            Debug.LogWarning("objectsParent não está configurado!");
+            return;
+        }
+
+        // Pega todos os filhos ativos
+        System.Collections.Generic.List<GameObject> activeChildren = new System.Collections.Generic.List<GameObject>();
+
+        foreach (Transform child in objectsParent.transform)
+        {
+            if (child.gameObject.activeSelf)
+            {
+                activeChildren.Add(child.gameObject);
+            }
+        }
+
+        if (activeChildren.Count == 0)
+        {
+            Debug.LogWarning("Nenhum objeto filho ativo encontrado!");
+            return;
+        }
+
+        // Desativa objetos aleatórios
+        int toDisable = Mathf.Min(objectsToDisable, activeChildren.Count);
+
+        for (int i = 0; i < toDisable; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, activeChildren.Count);
+            activeChildren[randomIndex].SetActive(false);
+            activeChildren.RemoveAt(randomIndex);
+            AudioSource.PlayClipAtPoint(bossClip, transform.position);
+            if(level == 10)
+            {
+                AudioSource.PlayClipAtPoint(battleClip, transform.position);
+            }
+        }
+
+        Debug.Log($"{toDisable} objetos foram desativados!");
+    }
+
+    private void UnpauseGame()
+    {
+        Time.timeScale = 1f;
+        Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
     }
 
     // === DINHEIRO ===

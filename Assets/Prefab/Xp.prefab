@@ -211,5 +211,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropXP
   pickupSound: {fileID: 8300000, guid: a11a34191a71a314891bdd58e6c16b9c, type: 3}
-  minXP: 3
-  maxXP: 20
+  minXP: 100
+  maxXP: 200

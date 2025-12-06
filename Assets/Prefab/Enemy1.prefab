@@ -202,10 +202,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ad620839ff4cf8418d18a4b1524a16b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  maxHealth: 60
+  maxHealth: 20
   attack: 12
   defense: 4
-  moveSpeed: 0.8
+  moveSpeed: 0.7
   attackRange: 1
   attackRate: 0.7
   attackClip: {fileID: 8300000, guid: 3981bb3c2fcab1e4fadef066e3969edc, type: 3}

@@ -205,8 +205,8 @@ MonoBehaviour:
   maxHealth: 75
   attack: 15
   defense: 1
-  moveSpeed: 1.5
-  attackRange: 1.2
+  moveSpeed: 0.7
+  attackRange: 0.9
   attackRate: 1.2
   attackClip: {fileID: 8300000, guid: 3981bb3c2fcab1e4fadef066e3969edc, type: 3}
   deathClip: {fileID: 8300000, guid: 1a63984c7c9ad2042a0805a1b8ab425e, type: 3}
