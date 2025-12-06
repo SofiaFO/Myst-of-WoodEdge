@@ -9,9 +9,9 @@ public class ItemRandomScript3 : MonoBehaviour
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private Image iconImage;
-    [SerializeField] private List<GameObject> itemPrefabs;
+    PlayerStats playerStats;
+    PlayerController playerController;
 
-    [Header("Banco de Itens")]
     [Header("Banco de Itens")]
     [SerializeField]
     private List<string> itemTitles = new List<string>()
@@ -40,6 +40,12 @@ public class ItemRandomScript3 : MonoBehaviour
     void Awake()
     {
         CardUI = GameObject.FindWithTag("CardUI");
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player != null)
+        {
+            playerStats = player.GetComponent<PlayerStats>();
+        }
+        playerController = player.GetComponent<PlayerController>();
     }
 
     // -----------------------------------------------------------
@@ -100,9 +106,6 @@ public class ItemRandomScript3 : MonoBehaviour
 
         // Tenta achar objeto existente
 
-
-        itemPrefabs[lastIndex].SetActive(true);
-
         CloseCardUI();
     }
 
@@ -127,8 +130,14 @@ public class ItemRandomScript3 : MonoBehaviour
     {
         switch (itemName)
         {
-            case "Machado Giratório":
-                itemPrefabs[lastIndex].GetComponent<MachadoGir>().Upgrade();
+            case "Poção de Cura":
+                playerStats.Heal(playerStats.GetHealth()/2);
+                break;
+            case "Armadura Medieval":
+                playerStats.IncreaseDefense(4);
+                break;
+            case "Chapéu mágico":
+                playerController.UpgradeAttack();
                 break;
         }
     }

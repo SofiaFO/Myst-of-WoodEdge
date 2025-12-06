@@ -111,8 +111,15 @@ public class ItemRandomScript2 : MonoBehaviour
     {
         switch (title)
         {
-            case "Machado Giratório":
-                return "Aumenta o dano e a velocidade do machado.";
+            case "Varinha Mágica":
+                return "Aumenta o dano da magia.";
+                break;
+            case "Colar Estelar":
+                return "Aumenta a quantidade de estrelas geradas.";
+                break;
+            case "Botas Chamariz":
+                return "Aumenta a duração e dano do efeito das botas.";
+                break;
         }
 
         return "Upgrade aplicado.";
@@ -125,8 +132,14 @@ public class ItemRandomScript2 : MonoBehaviour
     {
         switch (itemName)
         {
-            case "Machado Giratório":
-                itemPrefabs[lastIndex].GetComponent<MachadoGir>().Upgrade();
+            case "Varinha Mágica":
+                itemPrefabs[lastIndex].GetComponent<LaserSpawner>().Upgrade();
+                break;
+            case "Colar Estelar":
+                itemPrefabs[lastIndex].GetComponent<StarSpawner>().Upgrade();
+                break;
+            case "Botas Chamariz":
+                itemPrefabs[lastIndex].GetComponent<AreaSpawner>().Upgrade();
                 break;
         }
     }

@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     Animator _anim;
     private float _damageSoundCooldown = 0.25f; // 250ms de intervalo
     private float _lastDamageSoundTime = -999f; // tempo do último som
+    public bool upgrade = false;
 
 
     [SerializeField] float attackRate;     // segundos entre ataques
@@ -63,7 +64,6 @@ public class PlayerController : MonoBehaviour
         if (_isDead) return; // não recebe dano se estiver invencível ou morto
         damaging = true;                // começa invencibilidade temporária
         _playerStats.TakeDamage(damage); // aplica dano
-        print("Dano recebido: " + damage + ", Vida atual: " + _playerStats.CurrentHealth);
         if (_playerStats.CurrentHealth <= 0)
         {
             Death();
@@ -94,6 +94,9 @@ public class PlayerController : MonoBehaviour
         _isDead = true;
         AudioSource.PlayClipAtPoint(deathClip, transform.position);
         PlayerPrefs.DeleteKey("ITEM_Machado Giratório");
+        PlayerPrefs.DeleteKey("ITEM_Varinha Mágica");
+        PlayerPrefs.DeleteKey("ITEM_Colar Estelar");
+        PlayerPrefs.DeleteKey("ITEM_Botas Chamariz");
         PlayerPrefs.Save();
         _anim.SetTrigger("Destroy");
         StartCoroutine(LoadSceneAfterDelay());
@@ -181,12 +184,44 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
 
-        if (Mathf.Approximately(transform.localScale.x, -4f))
-            Instantiate(attackPrefab1, attackPoint.position, Quaternion.identity);
+        if (upgrade)
+        {
+            // MODO UPGRADE: Spawna dos dois lados
+            if (Mathf.Approximately(transform.localScale.x, -4f))
+            {
+                // Virado para ESQUERDA - spawna um no attackPoint e outro 4 unidades à DIREITA
+                Instantiate(attackPrefab1, attackPoint.position, Quaternion.identity);
+
+                Vector3 oppositePosition = new Vector3(attackPoint.position.x + 3f, attackPoint.position.y, attackPoint.position.z);
+                Instantiate(attackPrefab2, oppositePosition, Quaternion.identity);
+            }
+            else
+            {
+                // Virado para DIREITA - spawna um no attackPoint e outro 4 unidades à ESQUERDA
+                Instantiate(attackPrefab2, attackPoint.position, Quaternion.identity);
+
+                Vector3 oppositePosition = new Vector3(attackPoint.position.x - 3f, attackPoint.position.y, attackPoint.position.z);
+                Instantiate(attackPrefab1, oppositePosition, Quaternion.identity);
+                print("Ataque UPGRADE para direita!");
+            }
+        }
         else
-            Instantiate(attackPrefab2, attackPoint.position, Quaternion.identity);
+        {
+            // MODO NORMAL: Spawna baseado na direção
+            if (Mathf.Approximately(transform.localScale.x, -4f))
+                Instantiate(attackPrefab1, attackPoint.position, Quaternion.identity);
+            else
+                Instantiate(attackPrefab2, attackPoint.position, Quaternion.identity);
+        }
 
         if (attackClip != null)
             AudioSource.PlayClipAtPoint(attackClip, transform.position);
+    }
+
+    public void UpgradeAttack()
+    {
+        upgrade = true;
+        print("Upgrade ativado!");
+        attackDamage += 5f;
     }
 }
