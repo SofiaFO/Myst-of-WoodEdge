@@ -14,7 +14,6 @@ public class LeafProjectile : MonoBehaviour
     {
         if (col.CompareTag("Enemy"))
         {
-            // Se tiver script de inimigo, cause dano
             EnemyController enemy = col.GetComponent<EnemyController>();
             if (enemy != null)
                 enemy.TakeDamage(damage);

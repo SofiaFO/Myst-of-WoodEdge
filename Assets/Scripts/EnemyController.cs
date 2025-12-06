@@ -81,10 +81,28 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    // ============================================================
+//            MÉTODO FLIPAR MELHORADO 🔧
+// ============================================================
+
+// Cole isso no lugar do método Flipar() atual
+
     private void Flipar(Vector2 direction)
     {
+        if (_spriteRenderer == null)
+        {
+            Debug.LogWarning($"⚠️ {gameObject.name} não tem SpriteRenderer!");
+            return;
+        }
+
         if (direction.x != 0)
+        {
+            // Tenta dos dois jeitos (caso o sprite esteja invertido)
             _spriteRenderer.flipX = direction.x > 0;
+        
+            // 🔍 DEBUG (remova depois de testar)
+            Debug.Log($"{gameObject.name} | Dir: {direction.x:F2} | FlipX: {_spriteRenderer.flipX}");
+        }
     }
 
     // ============================================================

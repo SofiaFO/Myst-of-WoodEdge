@@ -2,11 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Controla os status principais do jogador:
-/// Vida, Ataque, Defesa, XP, Nível e Dinheiro.
-/// Também atualiza a UI (barras e textos) quando necessário.
-/// </summary>
 public class PlayerStats : MonoBehaviour
 {
     [Header("Status Base")]
@@ -18,15 +13,20 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private float xpToNextLevel = 10f;
     [SerializeField] private int money = 0;
     [SerializeField] private float moneyMultiplier;
+
+    [Header("Progressão de XP")]
+    [Tooltip("Multiplicador de XP a cada nível (1.20 = 20% a mais, 1.30 = 30% a mais)")]
+    [SerializeField] private float xpScalingPerLevel = 1.3f; // 🔥 Aumentado de 1.15 para 1.25
+
     private XpBar _xpBar;
     ItemRandomScript1 itemRandom1;
     ItemRandomScript2 itemRandom2;
     ItemRandomScript3 itemRandom3;
+
     GameObject Card1;
     GameObject Card2;
     GameObject Card3;
     GameObject CardUI;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     private float currentHealth;
 
@@ -36,7 +36,7 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private Text xpText;
     [SerializeField] private Text moneyText;
 
-    public event Action OnDeath; // para PlayerController reagir quando morrer
+    public event Action OnDeath;
 
     public static PlayerStats Instance;
 
@@ -49,11 +49,6 @@ public class PlayerStats : MonoBehaviour
         Card2 = GameObject.FindWithTag("Card2");
         Card3 = GameObject.FindWithTag("Card3");
 
-        Debug.Log($"🟩 CardUI encontrado? {CardUI != null}");
-        Debug.Log($"🟩 Card1 encontrado? {Card1 != null}");
-        Debug.Log($"🟩 Card2 encontrado? {Card2 != null}");
-        Debug.Log($"🟩 Card3 encontrado? {Card3 != null}");
-
         if (CardUI != null)
             CardUI.SetActive(false);
 
@@ -61,7 +56,7 @@ public class PlayerStats : MonoBehaviour
         PlayerStats[] players = FindObjectsOfType<PlayerStats>();
         if (players.Length > 1)
             Debug.LogError("❌ Mais de um PlayerStats encontrado na cena!");
-        // Singleton seguro
+
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -73,25 +68,18 @@ public class PlayerStats : MonoBehaviour
 
         _xpBar = FindObjectOfType<XpBar>();
 
-        // Health
-        if (!PlayerPrefs.HasKey("PlayerHealth"))
-            PlayerPrefs.SetFloat("PlayerHealth", 100f);
+        // PlayerPrefs load
+        if (!PlayerPrefs.HasKey("PlayerHealth")) PlayerPrefs.SetFloat("PlayerHealth", 100f);
         maxHealth = PlayerPrefs.GetFloat("PlayerHealth");
 
-        // Defense
-        if (!PlayerPrefs.HasKey("PlayerDefense"))
-            PlayerPrefs.SetFloat("PlayerDefense", 5f);
+        if (!PlayerPrefs.HasKey("PlayerDefense")) PlayerPrefs.SetFloat("PlayerDefense", 5f);
         defense = PlayerPrefs.GetFloat("PlayerDefense");
 
-        // Money Multiplier
-        if (!PlayerPrefs.HasKey("PlayerMoneyMultiplier"))
-            PlayerPrefs.SetFloat("PlayerMoneyMultiplier", 1f);
+        if (!PlayerPrefs.HasKey("PlayerMoneyMultiplier")) PlayerPrefs.SetFloat("PlayerMoneyMultiplier", 1f);
         moneyMultiplier = PlayerPrefs.GetFloat("PlayerMoneyMultiplier");
 
         PlayerPrefs.Save();
     }
-
-
 
     void Start()
     {
@@ -102,12 +90,10 @@ public class PlayerStats : MonoBehaviour
     // === VIDA ===
     public void TakeDamage(float damage)
     {
-        // Fórmula melhorada: defesa tem retorno decrescente, evita redução excessiva
-        float damageReduction = defense / (defense + 50f); // máximo de ~50% de redução com defesa muito alta
+        float damageReduction = defense / (defense + 50f);
         float realDamage = damage * (1 - damageReduction);
-        currentHealth -= Mathf.Max(1f, realDamage); // sempre causa pelo menos 1 de dano
+        currentHealth -= Mathf.Max(1f, realDamage);
         UpdateUI();
-
     }
 
     public void Heal(float amount)
@@ -133,26 +119,10 @@ public class PlayerStats : MonoBehaviour
         moneyMultiplier = amount;
     }
 
-    // === ATAQUE / DEFESA ===
-    public float GetAttack()
-    {
-        return attack;
-    }
-
-    public float GetDefense()
-    {
-        return defense;
-    }
-
-    public float GetMoneyMultiplier()
-    {
-        return moneyMultiplier;
-    }
-
-    public float GetHealth()
-    {
-        return maxHealth;
-    }
+    public float GetAttack() => attack;
+    public float GetDefense() => defense;
+    public float GetMoneyMultiplier() => moneyMultiplier;
+    public float GetHealth() => maxHealth;
 
     public void IncreaseHealth(float amount)
     {
@@ -169,13 +139,13 @@ public class PlayerStats : MonoBehaviour
     {
         defense += amount;
     }
-    
+
     public void IncreaseMoneyMultiplier(float amount)
     {
         moneyMultiplier += amount;
         Debug.Log($"Novo multiplicador de dinheiro: {moneyMultiplier}");
     }
-    
+
     public void AddMoneyFromKill(int baseAmount)
     {
         int total = Mathf.RoundToInt(baseAmount * moneyMultiplier);
@@ -202,7 +172,12 @@ public class PlayerStats : MonoBehaviour
         Debug.Log("🟦 [PlayerStats] Entrou em LevelUp()");
 
         level++;
-        xpToNextLevel *= 1.15f;
+
+        // 🔥 XP aumenta exponencialmente a cada nível
+        xpToNextLevel *= xpScalingPerLevel;
+        
+        Debug.Log($"📊 Nível {level} | XP necessário: {xpToNextLevel:F0} (x{xpScalingPerLevel})");
+        
         _xpBar.levelUp(xpToNextLevel);
 
         maxHealth += 15f;
@@ -210,51 +185,23 @@ public class PlayerStats : MonoBehaviour
         defense += 1.5f;
         currentHealth = maxHealth;
 
-        // Ativa UI
-        Debug.Log("🟨 Ativando CardUI...");
-        if (CardUI == null)
-            Debug.LogError("❌ CardUI está NULL no LevelUp!");
-        else
+        // Mostra cartas
+        if (CardUI != null)
             CardUI.SetActive(true);
+        else
+            Debug.LogError("❌ CardUI está NULL no LevelUp!");
 
-        // Verificando Cards
-        Debug.Log($"🟩 Card1 é null? {Card1 == null}");
-        Debug.Log($"🟩 Card2 é null? {Card2 == null}");
-        Debug.Log($"🟩 Card3 é null? {Card3 == null}");
+        // 🛑 PAUSA O JOGO AQUI
+        Time.timeScale = 0f;
 
-        // GetComponent com logs
-        Debug.Log("🔍 Pegando ItemRandomScript1...");
-        if (Card1 == null)
-            Debug.LogError("❌ Card1 está null antes do GetComponent!");
-
+        // Pega scripts dos cards
         itemRandom1 = Card1?.GetComponent<ItemRandomScript1>();
-        Debug.Log($"🔎 itemRandom1 encontrado? {itemRandom1 != null}");
-
-        Debug.Log("🔍 Pegando ItemRandomScript2...");
-        if (Card2 == null)
-            Debug.LogError("❌ Card2 está null antes do GetComponent!");
-
         itemRandom2 = Card2?.GetComponent<ItemRandomScript2>();
-        Debug.Log($"🔎 itemRandom2 encontrado? {itemRandom2 != null}");
-
-        Debug.Log("🔍 Pegando ItemRandomScript3...");
-        if (Card3 == null)
-            Debug.LogError("❌ Card3 está null antes do GetComponent!");
-
         itemRandom3 = Card3?.GetComponent<ItemRandomScript3>();
-        Debug.Log($"🔎 itemRandom3 encontrado? {itemRandom3 != null}");
 
-        // Agora tentando sortear
-        Debug.Log("🎲 Tentando DrawRandomItem nos 3 cards...");
-
-        if (itemRandom1 == null) Debug.LogError("❌ itemRandom1 está NULL!");
-        else itemRandom1.DrawRandomItem();
-
-        if (itemRandom2 == null) Debug.LogError("❌ itemRandom2 está NULL!");
-        else itemRandom2.DrawRandomItem();
-
-        if (itemRandom3 == null) Debug.LogError("❌ itemRandom3 está NULL!");
-        else itemRandom3.DrawRandomItem();
+        itemRandom1?.DrawRandomItem();
+        itemRandom2?.DrawRandomItem();
+        itemRandom3?.DrawRandomItem();
 
         Debug.Log($"🎉 Subiu para o nível {level}!");
     }
@@ -296,7 +243,16 @@ public class PlayerStats : MonoBehaviour
             moneyText.text = $"$ {money}";
     }
 
-    // getters simples para outros scripts
+    // === FUNÇÃO PARA DESPAUSAR APÓS ESCOLHER UMA CARTA ===
+    public void EscolheuCarta()
+    {
+        if (CardUI != null)
+            CardUI.SetActive(false);
+
+        Time.timeScale = 1f;
+    }
+
+    // getters
     public float CurrentHealth => currentHealth;
     public float MaxHealth => maxHealth;
     public float defenseValue => defense;

@@ -12,8 +12,20 @@ public class FolhasMaster : MonoBehaviour
     public float shootForce = 7f;
     public float projectileDamage = 5f;
 
+    private void Awake()
+    {
+        gameObject.SetActive(false);
+    }
+
     void Start()
     {
+        if (player == null)
+            player = GameObject.FindWithTag("Player").transform;
+    }
+
+    public void Activate()
+    {
+        gameObject.SetActive(true);
         SpawnLeaves();
     }
 
@@ -30,14 +42,10 @@ public class FolhasMaster : MonoBehaviour
             lo.orbitSpeed = orbitSpeed;
             lo.shootForce = shootForce;
 
-            // passa o dano para o projétil
             lo.leafProjectilePrefab.GetComponent<LeafProjectile>().damage = projectileDamage;
         }
     }
 
-    // =====================
-    //      UPGRADE
-    // =====================
     public void Upgrade()
     {
         leafCount += 1;
@@ -45,6 +53,6 @@ public class FolhasMaster : MonoBehaviour
         projectileDamage += 3f;
         shootForce += 2f;
 
-        SpawnLeaves(); // gera mais folhas
+        SpawnLeaves();
     }
 }

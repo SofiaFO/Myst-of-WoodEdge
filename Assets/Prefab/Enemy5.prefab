@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1222008374045004209}
   - component: {fileID: 7774745708703617180}
   - component: {fileID: 2385418664000845033}
+  - component: {fileID: 7503178569271644441}
   m_Layer: 7
   m_Name: Sprite
   m_TagString: Untagged
@@ -113,6 +114,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7503178569271644441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 186278870392465097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109defdc7f292534580ccab32d1d3db0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToroidalVisualGhost
 --- !u!1 &730835691878994017
 GameObject:
   m_ObjectHideFlags: 0
@@ -126,6 +139,7 @@ GameObject:
   - component: {fileID: 5683587962034970537}
   - component: {fileID: 5000109822456322585}
   - component: {fileID: 3725499753358158504}
+  - component: {fileID: 5646684610860105358}
   m_Layer: 7
   m_Name: Enemy5
   m_TagString: Enemy
@@ -234,7 +248,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0038651228, y: -0.017066866}
+  m_Offset: {x: 0.046035767, y: 0.0315969}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -244,7 +258,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.147275, y: 1.5014513}
+  m_Size: {x: 0.8266885, y: 0.8062432}
   m_EdgeRadius: 0
 --- !u!61 &3725499753358158504
 BoxCollider2D:
@@ -280,7 +294,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0007532835, y: -0.02191037}
+  m_Offset: {x: 0.049291193, y: 0.036236405}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -290,5 +304,18 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.1127956, y: 1.450065}
+  m_Size: {x: 0.7809497, y: 0.7675203}
   m_EdgeRadius: 0
+--- !u!114 &5646684610860105358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 730835691878994017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79d2ce78a8227a244be065d2f73ea8b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToroidalObject
+  teleportMargin: 2.07

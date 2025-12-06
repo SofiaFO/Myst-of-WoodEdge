@@ -11,6 +11,11 @@ public class FireballShooter : MonoBehaviour
 
     private float timer;
 
+    private void Awake()
+    {
+        gameObject.SetActive(false);
+    }
+
     void Start()
     {
         timer = shootInterval;
@@ -20,6 +25,8 @@ public class FireballShooter : MonoBehaviour
 
     void Update()
     {
+        if (!gameObject.activeSelf) return;
+
         timer -= Time.deltaTime;
 
         if (timer <= 0)
@@ -28,7 +35,6 @@ public class FireballShooter : MonoBehaviour
             timer = shootInterval;
         }
 
-        // Sempre seguir o jogador
         transform.position = player.position;
     }
 
