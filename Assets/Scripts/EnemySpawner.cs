@@ -13,7 +13,6 @@ public class EnemySpawner : MonoBehaviour
     public float spawnInterval = 1.5f;
     public float difficultyIncreaseInterval = 30f;
     public int additionalEnemiesPerInterval = 5;
-
     public float despawnDistanceX = 13f;
     public float despawnDistanceY = 13f;
 
@@ -21,6 +20,7 @@ public class EnemySpawner : MonoBehaviour
     private float nextDifficultyIncrease;
     private int currentEnemyTier = 0;
     private List<GameObject> enemies = new List<GameObject>();
+    private bool isSpawningEnabled = true; // NOVO: controla se o spawn está ativo
 
     void Awake()
     {
@@ -41,20 +41,20 @@ public class EnemySpawner : MonoBehaviour
 
     void Update()
     {
-
         if (player == null) return;
 
-        if (Time.time >= nextSpawn && enemies.Count < maxEnemies)
+        // SÓ SPAWNA SE ESTIVER HABILITADO
+        if (isSpawningEnabled && Time.time >= nextSpawn && enemies.Count < maxEnemies)
         {
             SpawnEnemy();
             nextSpawn = Time.time + spawnInterval;
         }
 
-        if (Time.time >= nextDifficultyIncrease)
+        // SÓ AUMENTA DIFICULDADE SE ESTIVER HABILITADO
+        if (isSpawningEnabled && Time.time >= nextDifficultyIncrease)
         {
             maxEnemies += additionalEnemiesPerInterval;
 
-            //
             if (currentEnemyTier < enemyPrefabs.Length - 1)
             {
                 currentEnemyTier++;
@@ -67,16 +67,54 @@ public class EnemySpawner : MonoBehaviour
     }
 
     // ================================
+    // CONTROLE DE SPAWN (NOVO)
+    // ================================
+
+    /// <summary>
+    /// Para o spawn de inimigos e limpa todos os inimigos existentes
+    /// </summary>
+    public void StopSpawning()
+    {
+        isSpawningEnabled = false;
+        ClearAllEnemies();
+        Debug.Log("Spawn de inimigos desativado!");
+    }
+
+    /// <summary>
+    /// Reativa o spawn de inimigos
+    /// </summary>
+    public void StartSpawning()
+    {
+        isSpawningEnabled = true;
+        nextSpawn = Time.time + spawnInterval;
+        Debug.Log("Spawn de inimigos reativado!");
+    }
+
+    /// <summary>
+    /// Destrói todos os inimigos spawned
+    /// </summary>
+    public void ClearAllEnemies()
+    {
+        for (int i = enemies.Count - 1; i >= 0; i--)
+        {
+            if (enemies[i] != null)
+            {
+                Destroy(enemies[i]);
+            }
+        }
+        enemies.Clear();
+        Debug.Log("Todos os inimigos foram removidos!");
+    }
+
+    // ================================
     // SPAWN SISTEMA
     // ================================
     void SpawnEnemy()
     {
         int waveSize = Random.Range(2, 6);
-
         for (int i = 0; i < waveSize; i++)
         {
             Vector3 pos = GetOffScreenPosition();
-
             GameObject prefab = enemyPrefabs[Random.Range(0, currentEnemyTier + 1)];
             GameObject e = Instantiate(prefab, pos, Quaternion.identity);
             enemies.Add(e);
@@ -87,7 +125,6 @@ public class EnemySpawner : MonoBehaviour
     {
         float minDist = 9f;
         float maxDist = 10f;
-
         Vector2 raw = Random.insideUnitCircle;
 
         // se o vetor for muito pequeno, force outra direção
@@ -96,28 +133,20 @@ public class EnemySpawner : MonoBehaviour
 
         Vector2 dir = raw.normalized;
         float dist = Random.Range(minDist, maxDist);
-
         Vector3 spawnPos = player.position + new Vector3(dir.x, dir.y, 0) * dist;
-
-        float dx = Mathf.Abs(spawnPos.x - player.position.x);
-        float dy = Mathf.Abs(spawnPos.y - player.position.y);
 
         return spawnPos;
     }
 
-
     // ================================
     // DESPAWN SISTEMA
     // ================================
-    // Substitua sua função Cleanup() por esta:
     void Cleanup()
     {
-
         // Itera de trás para frente para remover com segurança
         for (int i = enemies.Count - 1; i >= 0; i--)
         {
             GameObject e = enemies[i];
-
             if (e == null)
             {
                 enemies.RemoveAt(i);
@@ -139,5 +168,4 @@ public class EnemySpawner : MonoBehaviour
             }
         }
     }
-
 }

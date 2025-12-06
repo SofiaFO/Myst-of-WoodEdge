@@ -15,6 +15,9 @@ TagManager:
   - CardUI
   - "Machado Girat\xF3rio"
   - Tronco
+  - Boss
+  - Laser
+  - Spawner
   layers:
   - Default
   - TransparentFX

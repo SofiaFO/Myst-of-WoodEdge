@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3681245875767316571}
   - component: {fileID: 6669209123402341221}
   - component: {fileID: 6767225531281455466}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: "Machado Girat\xF3rio"
   m_TagString: "Machado Girat\xF3rio"
   m_Icon: {fileID: 0}
@@ -197,7 +197,7 @@ GameObject:
   - component: {fileID: 584608209510430275}
   - component: {fileID: 734297950835274295}
   - component: {fileID: 7581410327963562125}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -270,7 +270,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 826880461245978689}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -312,8 +312,8 @@ GameObject:
   - component: {fileID: 6171051653344566175}
   - component: {fileID: 4507880151396603032}
   - component: {fileID: 6627355953806166753}
-  - component: {fileID: 2980432979359100760}
-  m_Layer: 0
+  - component: {fileID: 227411907374670513}
+  m_Layer: 6
   m_Name: PinkMonster
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -359,7 +359,7 @@ MonoBehaviour:
   attackDamage: 20
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   attackPoint: {fileID: 8529761014988169515}
   attackClip: {fileID: 8300000, guid: 5208ff2f92c85a946be7ebe9939618aa, type: 3}
   hurtClip: {fileID: 8300000, guid: 3981bb3c2fcab1e4fadef066e3969edc, type: 3}
@@ -451,7 +451,7 @@ CapsuleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3337100502254712654}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -518,7 +518,7 @@ CapsuleCollider2D:
   m_Offset: {x: -0.0003851652, y: -0.013975784}
   m_Size: {x: 0.16514206, y: 0.29552087}
   m_Direction: 0
---- !u!114 &2980432979359100760
+--- !u!114 &227411907374670513
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -530,6 +530,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79d2ce78a8227a244be065d2f73ea8b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ToroidalObject
+  teleportMargin: 0.2
 --- !u!1 &4160069220121758628
 GameObject:
   m_ObjectHideFlags: 0
@@ -540,7 +541,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8001515038815820428}
   - component: {fileID: 6091444554244616274}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Vida
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -628,7 +629,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8529761014988169515}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: AttackPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -659,7 +660,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 442104349367341057}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ItemPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -694,7 +695,7 @@ GameObject:
   - component: {fileID: 2329392872808352953}
   - component: {fileID: 861824080142860529}
   - component: {fileID: 8536128425455797664}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -795,7 +796,7 @@ GameObject:
   - component: {fileID: 4699915838459430767}
   - component: {fileID: 6456866133528557703}
   - component: {fileID: 5886101847468156692}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -908,7 +909,7 @@ GameObject:
   - component: {fileID: 4871107570663223495}
   - component: {fileID: 8320334432748550016}
   - component: {fileID: 7660200881768090459}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}

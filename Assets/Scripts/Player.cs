@@ -63,6 +63,13 @@ public class PlayerController : MonoBehaviour
         if (_isDead) return; // não recebe dano se estiver invencível ou morto
         damaging = true;                // começa invencibilidade temporária
         _playerStats.TakeDamage(damage); // aplica dano
+        print("Dano recebido: " + damage + ", Vida atual: " + _playerStats.CurrentHealth);
+        if (_playerStats.CurrentHealth <= 0)
+        {
+            Death();
+            return;
+        }
+
         _anim.SetBool("Damage", true);   // inicia animação de dano
         if (Time.time - _lastDamageSoundTime >= _damageSoundCooldown)
         {
@@ -70,24 +77,27 @@ public class PlayerController : MonoBehaviour
             _lastDamageSoundTime = Time.time;
         }
 
-
-        if (_playerStats.CurrentHealth <= 0)
-        {
-            xDir = 0;
-            yDir = 0;
-            moveSpeed = 0;
-            GetComponentInChildren<Collider2D>().enabled = false;
-            _isDead = true;
-            AudioSource.PlayClipAtPoint(deathClip, transform.position);
-            PlayerPrefs.DeleteKey("ITEM_Machado Giratório");
-            PlayerPrefs.Save();
-            _anim.SetTrigger("Destroy");
-            StartCoroutine(LoadSceneAfterDelay());
-            return;
-        }
         _gameManager.AddCoins(_playerStats.Money);
         // inicia coroutine para resetar o dano depois da animação
         StartCoroutine(EndDamageAfterDelay(0.6f)); // 0.6 = duração da animação de dano
+        
+    }
+
+    public void Death()
+    {
+        xDir = 0;
+        yDir = 0;
+        moveSpeed = 0;
+        _rb.linearVelocity = Vector2.zero;
+        _rb.mass = float.MaxValue;
+        GetComponentInChildren<Collider2D>().enabled = false;
+        _isDead = true;
+        AudioSource.PlayClipAtPoint(deathClip, transform.position);
+        PlayerPrefs.DeleteKey("ITEM_Machado Giratório");
+        PlayerPrefs.Save();
+        _anim.SetTrigger("Destroy");
+        StartCoroutine(LoadSceneAfterDelay());
+        return;
     }
 
     private IEnumerator EndDamageAfterDelay(float duration)

@@ -138,8 +138,20 @@ public class ItemRandomScript3 : MonoBehaviour
     // -----------------------------------------------------------
     private void CloseCardUI()
     {
+
+        // Chama a função de transição da câmera no PlayerStats
+        if (PlayerStats.Instance != null)
+        {
+            PlayerStats.Instance.StartCameraTransition();
+        }
+        else
+        {
+            // Fallback caso não encontre o PlayerStats
+            Time.timeScale = 1f;
+            Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
+        }
+
+
         CardUI.SetActive(false);
-        Time.timeScale = 1f;
-        Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
     }
 }
