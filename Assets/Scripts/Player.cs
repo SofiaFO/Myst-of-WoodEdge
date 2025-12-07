@@ -280,35 +280,60 @@ public class PlayerController : MonoBehaviour
     }
 
     IEnumerator SpawnAttackAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
+{
+    yield return new WaitForSeconds(delay);
 
-        if (upgrade)
+    if (upgrade)
+    {
+        if (Mathf.Approximately(transform.localScale.x, -4f))
         {
-            if (Mathf.Approximately(transform.localScale.x, -4f))
-            {
-                Instantiate(attackPrefab1, attackPoint.position, Quaternion.identity);
-                Vector3 oppositePosition = new Vector3(attackPoint.position.x + 3f, attackPoint.position.y, attackPoint.position.z);
-                Instantiate(attackPrefab2, oppositePosition, Quaternion.identity);
-            }
-            else
-            {
-                Instantiate(attackPrefab2, attackPoint.position, Quaternion.identity);
-                Vector3 oppositePosition = new Vector3(attackPoint.position.x - 3f, attackPoint.position.y, attackPoint.position.z);
-                Instantiate(attackPrefab1, oppositePosition, Quaternion.identity);
-            }
+            // Projétil 1 vai para a ESQUERDA
+            GameObject attack1 = Instantiate(attackPrefab1, attackPoint.position, Quaternion.identity);
+            Attack attackScript1 = attack1.GetComponent<Attack>();
+            if (attackScript1 != null) attackScript1.SetDirection(-1f); // ESQUERDA
+
+            // Projétil 2 vai para a DIREITA
+            Vector3 oppositePosition = new Vector3(attackPoint.position.x + 3f, attackPoint.position.y, attackPoint.position.z);
+            GameObject attack2 = Instantiate(attackPrefab2, oppositePosition, Quaternion.identity);
+            Attack attackScript2 = attack2.GetComponent<Attack>();
+            if (attackScript2 != null) attackScript2.SetDirection(1f); // DIREITA
         }
         else
         {
-            if (Mathf.Approximately(transform.localScale.x, -4f))
-                Instantiate(attackPrefab1, attackPoint.position, Quaternion.identity);
-            else
-                Instantiate(attackPrefab2, attackPoint.position, Quaternion.identity);
-        }
+            // Projétil 2 vai para a DIREITA
+            GameObject attack2 = Instantiate(attackPrefab2, attackPoint.position, Quaternion.identity);
+            Attack attackScript2 = attack2.GetComponent<Attack>();
+            if (attackScript2 != null) attackScript2.SetDirection(1f); // DIREITA
 
-        if (attackClip != null)
-            AudioSource.PlayClipAtPoint(attackClip, transform.position);
+            // Projétil 1 vai para a ESQUERDA
+            Vector3 oppositePosition = new Vector3(attackPoint.position.x - 3f, attackPoint.position.y, attackPoint.position.z);
+            GameObject attack1 = Instantiate(attackPrefab1, oppositePosition, Quaternion.identity);
+            Attack attackScript1 = attack1.GetComponent<Attack>();
+            if (attackScript1 != null) attackScript1.SetDirection(-1f); // ESQUERDA
+        }
     }
+    else
+    {
+        // Ataque normal - segue a direção do player
+        float direction = Mathf.Approximately(transform.localScale.x, -4f) ? -1f : 1f;
+        
+        if (Mathf.Approximately(transform.localScale.x, -4f))
+        {
+            GameObject attack = Instantiate(attackPrefab1, attackPoint.position, Quaternion.identity);
+            Attack attackScript = attack.GetComponent<Attack>();
+            if (attackScript != null) attackScript.SetDirection(direction);
+        }
+        else
+        {
+            GameObject attack = Instantiate(attackPrefab2, attackPoint.position, Quaternion.identity);
+            Attack attackScript = attack.GetComponent<Attack>();
+            if (attackScript != null) attackScript.SetDirection(direction);
+        }
+    }
+
+    if (attackClip != null)
+        AudioSource.PlayClipAtPoint(attackClip, transform.position);
+}
 
     public void UpgradeAttack()
     {

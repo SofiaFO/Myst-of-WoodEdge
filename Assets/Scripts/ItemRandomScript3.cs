@@ -16,19 +16,17 @@ public class ItemRandomScript3 : MonoBehaviour
     [SerializeField]
     private List<string> itemTitles = new List<string>()
     {
-        "Machado Giratório",
-        "Cajado Solar",
-        //"Adaga Sombria",
-        //"Escudo de Pedra Rúnica",
+        "Poção de Cura",
+        "Armadura Medieval",
+        "Chapéu mágico",
     };
 
     [SerializeField]
     private List<string> itemDescriptions = new List<string>()
     {
-        "Gera um machado que orbita ao redor do jogador causando dano contínuo.",
-        "Projetos de luz causam dano aumentado e queimam inimigos atingidos.",
-        //"Aumenta muito a chance de crítico e permite ataques pelas costas mais fortes.",
-        //"Reduz dano recebido em 25% e gera um pequeno escudo a cada 10 segundos.",
+        "Frasco curativo que cura metade da vida do usuário",
+        "Lendária armadura, confere ao usuário mais resistência contra todas as fontes",
+        "Cobiçado por todos os feiticeiros, gera mais um projétil de ataque e dano base",
     };
 
     [SerializeField] private List<Sprite> itemSprites = new List<Sprite>();
@@ -67,7 +65,9 @@ public class ItemRandomScript3 : MonoBehaviour
         lastIndex = index;
 
         string title = itemTitles[lastIndex];
-        bool alreadyOwned = PlayerPrefs.GetInt($"ITEM_{title}", 0) == 1;
+        
+        // Apenas o Chapéu mágico tem sistema de upgrade
+        bool alreadyOwned = (title == "Chapéu mágico") && PlayerPrefs.GetInt($"ITEM_{title}", 0) == 1;
 
         titleText.text = alreadyOwned ? title + " (UPGRADE)" : title;
         descriptionText.text = alreadyOwned
@@ -90,9 +90,11 @@ public class ItemRandomScript3 : MonoBehaviour
         }
 
         string itemName = itemTitles[lastIndex];
-        bool alreadyOwned = PlayerPrefs.GetInt($"ITEM_{itemName}", 0) == 1;
+        
+        // Apenas o Chapéu mágico tem sistema de upgrade
+        bool alreadyOwned = (itemName == "Chapéu mágico") && PlayerPrefs.GetInt($"ITEM_{itemName}", 0) == 1;
 
-        // Se já tem → chamar upgrade
+        // Se é o Chapéu e já tem → chamar upgrade
         if (alreadyOwned)
         {
             ApplyUpgrade(itemName);
@@ -100,37 +102,23 @@ public class ItemRandomScript3 : MonoBehaviour
             return;
         }
 
-        // Se ainda não tem → ativar primeira vez
-        PlayerPrefs.SetInt($"ITEM_{itemName}", 1);
-        PlayerPrefs.Save();
+        // Se é o Chapéu e ainda não tem → marcar como obtido
+        if (itemName == "Chapéu mágico")
+        {
+            PlayerPrefs.SetInt($"ITEM_{itemName}", 1);
+            PlayerPrefs.Save();
+        }
 
-        // Tenta achar objeto existente
-
+        // Aplicar efeito do item (primeira vez ou sempre para Poção/Armadura)
+        ApplyItemEffect_Internal(itemName);
+        
         CloseCardUI();
     }
 
     // -----------------------------------------------------------
-    // DESCRIÇÃO DO UPGRADE
+    // APLICAR EFEITO DO ITEM (primeira vez ou sempre)
     // -----------------------------------------------------------
-    private string GetUpgradeDescription(string title)
-    {
-        switch (title)
-        {
-            case "Poção de Cura":
-                return "Frasco curativo que cura metade da vida do usuário";
-            case "Armadura Medieval":
-                return "Lendária armadura, confere ao usuário mais resistência contra todas as fontes";
-            case "Chapéu mágico":
-                return "Chapéu encantado que aumenta o poder dos ataques mágicos do usuário";
-        }
-
-        return "Upgrade aplicado.";
-    }
-
-    // -----------------------------------------------------------
-    // APLICAR UPGRADE DO ITEM
-    // -----------------------------------------------------------
-    private void ApplyUpgrade(string itemName)
+    private void ApplyItemEffect_Internal(string itemName)
     {
         switch (itemName)
         {
@@ -147,11 +135,37 @@ public class ItemRandomScript3 : MonoBehaviour
     }
 
     // -----------------------------------------------------------
+    // DESCRIÇÃO DO UPGRADE (apenas para Chapéu mágico)
+    // -----------------------------------------------------------
+    private string GetUpgradeDescription(string title)
+    {
+        switch (title)
+        {
+            case "Chapéu mágico":
+                return "Aumenta ainda mais o poder dos ataques mágicos do usuário";
+            default:
+                return itemDescriptions[lastIndex]; // Não deveria acontecer
+        }
+    }
+
+    // -----------------------------------------------------------
+    // APLICAR UPGRADE DO ITEM (apenas para Chapéu mágico)
+    // -----------------------------------------------------------
+    private void ApplyUpgrade(string itemName)
+    {
+        switch (itemName)
+        {
+            case "Chapéu mágico":
+                playerController.UpgradeAttack();
+                break;
+        }
+    }
+
+    // -----------------------------------------------------------
     // FECHAR UI E DESPAUSAR JOGO
     // -----------------------------------------------------------
     private void CloseCardUI()
     {
-
         // Chama a função de transição da câmera no PlayerStats
         if (PlayerStats.Instance != null)
         {
@@ -163,7 +177,6 @@ public class ItemRandomScript3 : MonoBehaviour
             Time.timeScale = 1f;
             Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
         }
-
 
         CardUI.SetActive(false);
     }

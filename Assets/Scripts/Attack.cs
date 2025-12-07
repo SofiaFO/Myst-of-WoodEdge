@@ -4,13 +4,20 @@ using System.Collections;
 public class Attack : MonoBehaviour
 {
     [SerializeField] float xSpeed = 5f;
-    [SerializeField] float moveTime = 2f; // tempo que se move antes de parar
+    [SerializeField] float moveTime = 2f;
 
     Rigidbody2D _rb;
+    private float directionMultiplier = 1f; // Nova variável
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
+    }
+
+    // Método para definir a direção ANTES de OnEnable
+    public void SetDirection(float direction)
+    {
+        directionMultiplier = direction;
     }
 
     private void OnEnable()
@@ -20,16 +27,12 @@ public class Attack : MonoBehaviour
 
     IEnumerator MoveForwardAndStop()
     {
-        // aplica velocidade para frente
-        _rb.linearVelocity = new Vector2(xSpeed, 0f); // 0f no Y se n�o quiser subir
+        // Aplica velocidade com a direção correta
+        _rb.linearVelocity = new Vector2(xSpeed * directionMultiplier, 0f);
 
-        // espera o tempo definido
         yield return new WaitForSeconds(moveTime);
 
-        // para o movimento
         _rb.linearVelocity = Vector2.zero;
-
-        // destr�i o proj�til
         Destroy(gameObject);
     }
 }

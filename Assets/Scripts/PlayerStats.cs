@@ -218,6 +218,13 @@ public class PlayerStats : MonoBehaviour
         maxHealth += 10f;
         attack += 2f;
         defense += 1f;
+    
+        // ===== CURA 5% AO SUBIR DE NÍVEL =====
+        float healAmount = maxHealth * 0.05f; // 5% da vida máxima
+        currentHealth = Mathf.Min(maxHealth, currentHealth + healAmount);
+        UpdateUI();
+        // =====================================
+    
         Time.timeScale = 0f;
         Physics2D.simulationMode = SimulationMode2D.Script;
         CardUI.SetActive(true);
@@ -228,7 +235,7 @@ public class PlayerStats : MonoBehaviour
         itemRandom2.DrawRandomItem();
         itemRandom3.DrawRandomItem();
 
-        Debug.Log($"Subiu para o nível {level}!");
+        Debug.Log($"Subiu para o nível {level}! +{healAmount:0.0} HP restaurado!");
     }
 
     // === SISTEMA DE CÂMERA E DESATIVAÇÃO DE OBJETOS ===
