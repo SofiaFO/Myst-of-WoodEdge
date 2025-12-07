@@ -1792,10 +1792,11 @@ MonoBehaviour:
   - {fileID: 977090950156960093, guid: 5a9eae5d1f85dc144ac2548d16bd8698, type: 3}
   - {fileID: 977090950156960093, guid: a947687abfb4df743909af3c79174cc5, type: 3}
   - {fileID: 977090950156960093, guid: fd35aeb3fb78d574795ea0240f3547db, type: 3}
+  - {fileID: 9118853983265349566, guid: 6970f9fec3aff3345ad3776675087855, type: 3}
   singleMapWidth: 36
   singleMapHeight: 28
-  gridX: 3
-  gridY: 3
+  gridX: 4
+  gridY: 4
   torusMap: {fileID: 988299579}
 --- !u!1 &850865418
 GameObject:
@@ -2239,8 +2240,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16f2d12c7f2ffb44eab389e2b02952fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TorusMap
-  mapWidth: 108
-  mapHeight: 84
+  mapWidth: 144
+  mapHeight: 112
   halfWidth: 0
   halfHeight: 0
 --- !u!4 &988299580
@@ -2760,6 +2761,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 227411907374670513, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
+      propertyPath: teleportMargin
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 584608209510430275, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -4086,7 +4091,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraToroidalFollow
   player: {fileID: 292399576}
   smoothSpeed: 0.15
-  edgeOffset: 1.5
+  edgeOffsetLeft: 0
+  edgeOffsetRight: 1.19
+  edgeOffsetTop: 0
+  edgeOffsetBottom: 1.61
 --- !u!114 &1931948979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4175,8 +4183,6 @@ MonoBehaviour:
   initialWaveSize: 3
   maxWaveSize: 10
   waveSizeIncreaseFrequency: 3
-  despawnDistanceX: 13
-  despawnDistanceY: 13
 --- !u!4 &1937859537
 Transform:
   m_ObjectHideFlags: 0

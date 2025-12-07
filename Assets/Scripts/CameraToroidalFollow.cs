@@ -8,9 +8,15 @@ public class CameraToroidalFollow : MonoBehaviour
     [Range(0.01f, 0.5f)]
     public float smoothSpeed = 0.15f;
     
-    [Header("Ajuste de Margem")]
-    [Range(0f, 2f)]
-    public float edgeOffset = -10f; // Reduzido para começar
+    [Header("Ajuste de Margem por Lado")]
+    [Range(0f, 5f)]
+    public float edgeOffsetLeft = 1f;
+    [Range(0f, 5f)]
+    public float edgeOffsetRight = 1f;
+    [Range(0f, 5f)]
+    public float edgeOffsetTop = 1f;
+    [Range(0f, 5f)]
+    public float edgeOffsetBottom = 1f;
 
     private Vector3 cameraPos;
     private Vector3 targetPos; // posição alvo que a câmera quer seguir
@@ -42,14 +48,29 @@ public class CameraToroidalFollow : MonoBehaviour
         Debug.Log($"Camera Width: {camWidth}");
         Debug.Log($"Camera Height: {camHeight}");
         Debug.Log("===== LIMITES CALCULADOS =====");
-        Debug.Log($"Min X Câmera: {-map.halfWidth + camWidth + edgeOffset}");
-        Debug.Log($"Max X Câmera: {map.halfWidth - camWidth - edgeOffset}");
-        Debug.Log($"Min Y Câmera: {-map.halfHeight + camHeight + edgeOffset}");
-        Debug.Log($"Max Y Câmera: {map.halfHeight - camHeight - edgeOffset}");
+        Debug.Log($"Min X Câmera (Esquerda): {-map.halfWidth + camWidth + edgeOffsetLeft}");
+        Debug.Log($"Max X Câmera (Direita): {map.halfWidth - camWidth - edgeOffsetRight}");
+        Debug.Log($"Min Y Câmera (Baixo): {-map.halfHeight + camHeight + edgeOffsetBottom}");
+        Debug.Log($"Max Y Câmera (Cima): {map.halfHeight - camHeight - edgeOffsetTop}");
     }
 
     void LateUpdate()
     {
+        if (player == null)
+        {
+            // tenta reencontrar o player automaticamente
+            var found = GameObject.FindWithTag("Player");
+            if (found != null)
+            {
+                player = found.transform;
+                targetPos = player.position;
+                cameraPos = player.position;
+            }
+            else
+            {
+                return; // sem player, não faz nada
+            }
+        }
         Vector3 playerPos = player.position;
         float w = map.mapWidth;
         float h = map.mapHeight;
@@ -78,12 +99,12 @@ public class CameraToroidalFollow : MonoBehaviour
         float bestCamX = targetPos.x;
         float bestCamY = targetPos.y;
 
-        // Limites onde a câmera pode estar (com offset de segurança)
+        // Limites onde a câmera pode estar (com offset de segurança por lado)
         // A câmera não pode ir além desses pontos sem mostrar a borda azul
-        float minX = -map.halfWidth + camWidth + edgeOffset;
-        float maxX = map.halfWidth - camWidth - edgeOffset;
-        float minY = -map.halfHeight + camHeight + edgeOffset;
-        float maxY = map.halfHeight - camHeight - edgeOffset;
+        float minX = -map.halfWidth + camWidth + edgeOffsetLeft;
+        float maxX = map.halfWidth - camWidth - edgeOffsetRight;
+        float minY = -map.halfHeight + camHeight + edgeOffsetBottom;
+        float maxY = map.halfHeight - camHeight - edgeOffsetTop;
 
         // Se o target está fora da área segura, precisamos encontrar alternativas
         // Testar as 9 posições possíveis (original + 8 wraps) e escolher a melhor
@@ -142,11 +163,11 @@ public class CameraToroidalFollow : MonoBehaviour
         Gizmos.DrawLine(bottomRight, bottomLeft);
         Gizmos.DrawLine(bottomLeft, topLeft);
 
-        // Desenhar área segura da câmera
-        float minX = -map.halfWidth + camWidth + edgeOffset;
-        float maxX = map.halfWidth - camWidth - edgeOffset;
-        float minY = -map.halfHeight + camHeight + edgeOffset;
-        float maxY = map.halfHeight - camHeight - edgeOffset;
+        // Desenhar área segura da câmera (com margens independentes)
+        float minX = -map.halfWidth + camWidth + edgeOffsetLeft;
+        float maxX = map.halfWidth - camWidth - edgeOffsetRight;
+        float minY = -map.halfHeight + camHeight + edgeOffsetBottom;
+        float maxY = map.halfHeight - camHeight - edgeOffsetTop;
 
         Gizmos.color = Color.yellow;
         topLeft = new Vector3(minX, maxY, 0);

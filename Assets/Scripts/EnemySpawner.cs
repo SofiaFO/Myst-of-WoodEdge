@@ -10,39 +10,35 @@ public class EnemySpawner : MonoBehaviour
     public GameObject[] enemyPrefabs;
 
     [Header("Spawn Settings")]
-    public int initialMaxEnemies = 10;
-    public float initialSpawnInterval = 2f;
-
+    public int initialMaxEnemies = 20; // 🔥 Era 10, agora 20
+    public float initialSpawnInterval = 1.5f; // 🔥 Era 2f, agora 1.5f
+    
     [Header("Progressão Temporal")]
     [Tooltip("A cada quantos segundos a dificuldade aumenta")]
     public float difficultyIncreaseInterval = 30f;
-
+    
     [Tooltip("Quantos inimigos a mais spawnam a cada intervalo")]
     public int additionalEnemiesPerInterval = 5;
-
+    
     [Tooltip("Redução no intervalo de spawn (em %)")]
     [Range(0f, 0.2f)]
     public float spawnIntervalReduction = 0.05f; // 5% mais rápido
-
+    
     [Tooltip("Intervalo mínimo de spawn (para não ficar caótico)")]
     public float minSpawnInterval = 0.3f;
-
+    
     [Tooltip("Inimigos máximos simultaneamente (evita lag)")]
     public int absoluteMaxEnemies = 200;
 
     [Header("Wave Settings")]
     [Tooltip("Tamanho inicial da wave")]
     public int initialWaveSize = 3;
-
+    
     [Tooltip("Tamanho máximo da wave")]
     public int maxWaveSize = 10;
-
+    
     [Tooltip("Aumenta wave size a cada X níveis de dificuldade")]
     public int waveSizeIncreaseFrequency = 3;
-
-    [Header("Despawn Settings")]
-    public float despawnDistanceX = 13f;
-    public float despawnDistanceY = 13f;
 
     private float currentSpawnInterval;
     private int currentMaxEnemies;
@@ -70,13 +66,14 @@ public class EnemySpawner : MonoBehaviour
 
     void Start()
     {
+        // Inicializar valores
         currentMaxEnemies = initialMaxEnemies;
         currentSpawnInterval = initialSpawnInterval;
         currentWaveSize = initialWaveSize;
-
+        
         nextSpawn = Time.time + currentSpawnInterval;
         nextDifficultyIncrease = Time.time + difficultyIncreaseInterval;
-
+        
         Debug.Log($"🎮 Spawner iniciado | Max Enemies: {currentMaxEnemies} | Spawn Interval: {currentSpawnInterval}s");
     }
 
@@ -112,7 +109,7 @@ public class EnemySpawner : MonoBehaviour
     {
         isSpawningEnabled = false;
         ClearAllEnemies();
-        Debug.Log("Spawn de inimigos desativado!");
+        Debug.Log("🛑 Spawn de inimigos desativado!");
     }
 
     /// <summary>
@@ -122,7 +119,7 @@ public class EnemySpawner : MonoBehaviour
     {
         isSpawningEnabled = true;
         nextSpawn = Time.time + currentSpawnInterval;
-        Debug.Log("Spawn de inimigos reativado!");
+        Debug.Log("✅ Spawn de inimigos reativado!");
     }
 
     /// <summary>
@@ -138,7 +135,7 @@ public class EnemySpawner : MonoBehaviour
             }
         }
         enemies.Clear();
-        Debug.Log("Todos os inimigos foram removidos!");
+        Debug.Log("🧹 Todos os inimigos foram removidos!");
     }
 
     // ================================
@@ -147,28 +144,28 @@ public class EnemySpawner : MonoBehaviour
     void IncreaseDifficulty()
     {
         difficultyLevel++;
-
+        
         // Aumenta número máximo de inimigos
         currentMaxEnemies += additionalEnemiesPerInterval;
         currentMaxEnemies = Mathf.Min(currentMaxEnemies, absoluteMaxEnemies);
-
+        
         // Reduz intervalo de spawn (spawna mais rápido)
         currentSpawnInterval *= (1f - spawnIntervalReduction);
         currentSpawnInterval = Mathf.Max(currentSpawnInterval, minSpawnInterval);
-
+        
         // Aumenta tamanho das waves periodicamente
         if (difficultyLevel % waveSizeIncreaseFrequency == 0)
         {
             currentWaveSize = Mathf.Min(currentWaveSize + 1, maxWaveSize);
         }
-
+        
         // Desbloqueia novos tipos de inimigos
         if (currentEnemyTier < enemyPrefabs.Length - 1)
         {
             currentEnemyTier++;
             Debug.Log($"🔓 Novo tipo de inimigo desbloqueado! Tier: {currentEnemyTier}");
         }
-
+        
         Debug.Log($"⬆️ DIFICULDADE AUMENTOU (Nível {difficultyLevel})");
         Debug.Log($"   Max Enemies: {currentMaxEnemies}");
         Debug.Log($"   Spawn Interval: {currentSpawnInterval:F2}s");
@@ -189,7 +186,7 @@ public class EnemySpawner : MonoBehaviour
         {
             // Não ultrapassa o limite absoluto
             if (enemies.Count >= absoluteMaxEnemies) break;
-
+            
             Vector3 pos = GetOffScreenPosition();
 
             // Escolhe um tipo de inimigo (favorece os mais fortes conforme o tempo passa)
@@ -203,10 +200,10 @@ public class EnemySpawner : MonoBehaviour
     {
         // Sistema de pesos: inimigos mais fortes têm mais chance conforme o tier aumenta
         int maxTier = Mathf.Min(currentEnemyTier, enemyPrefabs.Length - 1);
-
+        
         // Chance maior para inimigos do tier atual
         float rand = Random.value;
-
+        
         if (rand < 0.6f)
         {
             // 60% de chance: inimigo do tier atual
@@ -227,7 +224,7 @@ public class EnemySpawner : MonoBehaviour
     Vector3 GetOffScreenPosition()
     {
         float minDist = 9f;
-        float maxDist = 12f;
+        float maxDist = 12f; // Aumentei um pouco
 
         Vector2 raw = Random.insideUnitCircle;
 
@@ -236,38 +233,22 @@ public class EnemySpawner : MonoBehaviour
 
         Vector2 dir = raw.normalized;
         float dist = Random.Range(minDist, maxDist);
+
         Vector3 spawnPos = player.position + new Vector3(dir.x, dir.y, 0) * dist;
 
         return spawnPos;
     }
 
     // ================================
-    // CLEANUP/DESPAWN SISTEMA
+    // CLEANUP SISTEMA ✅
     // ================================
+    // Remove apenas inimigos que já foram destruídos (null)
     void Cleanup()
     {
-        // Itera de trás para frente para remover com segurança
         for (int i = enemies.Count - 1; i >= 0; i--)
         {
-            GameObject e = enemies[i];
-
-            // Remove se foi destruído
-            if (e == null)
+            if (enemies[i] == null)
             {
-                enemies.RemoveAt(i);
-                continue;
-            }
-
-            // Despawn baseado em distância
-            Vector3 enemyPos = e.transform.position;
-            Vector3 playerPos = player.position;
-            Vector3 delta = enemyPos - playerPos;
-            float dx = Mathf.Abs(delta.x);
-            float dy = Mathf.Abs(delta.y);
-
-            if (dx > despawnDistanceX || dy > despawnDistanceY)
-            {
-                Destroy(e);
                 enemies.RemoveAt(i);
             }
         }
