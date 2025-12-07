@@ -81,28 +81,10 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    // ============================================================
-//            MÉTODO FLIPAR MELHORADO 🔧
-// ============================================================
-
-// Cole isso no lugar do método Flipar() atual
-
     private void Flipar(Vector2 direction)
     {
-        if (_spriteRenderer == null)
-        {
-            Debug.LogWarning($"⚠️ {gameObject.name} não tem SpriteRenderer!");
-            return;
-        }
-
         if (direction.x != 0)
-        {
-            // Tenta dos dois jeitos (caso o sprite esteja invertido)
             _spriteRenderer.flipX = direction.x > 0;
-        
-            // 🔍 DEBUG (remova depois de testar)
-            Debug.Log($"{gameObject.name} | Dir: {direction.x:F2} | FlipX: {_spriteRenderer.flipX}");
-        }
     }
 
     // ============================================================
@@ -143,15 +125,12 @@ public class EnemyController : MonoBehaviour
     //                    TOMAR DANO + KNOCKBACK
     // ============================================================
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float dmg)
     {
         if (_isDead) return;
 
-        // Fórmula melhorada: defesa tem retorno decrescente, evita redução excessiva
-        float damageReduction = defense / (defense + 50f); // máximo de ~50% de redução com defesa muito alta
-        float realDamage = damage * (1 - damageReduction);
-        currentHealth -= Mathf.Max(1f, realDamage); // sempre causa pelo menos 1 de dano
-        damaging = true;
+        float finalDamage = Mathf.Max(1f, dmg - defense);
+        currentHealth -= finalDamage;
 
         damaging = true;
         if (_anim != null) _anim.SetBool("isDamage", true);
@@ -220,23 +199,26 @@ public class EnemyController : MonoBehaviour
         foreach (var c in GetComponents<Collider2D>())
             c.enabled = false;
 
-        // Sistema de drop melhorado: pode dropar ambos XP e moeda
-        float xpChance = 0.8f;   // 80% de chance de dropar XP
-        float coinChance = 0.4f; // 40% de chance de dropar moeda
+        float chance = Random.value; // valor entre 0 e 1
 
-        // Dropar XP
-        if (Random.value < xpChance)
+        if (chance < 0.4f) // 20% de chance de dropar algo
         {
-            Instantiate(xpPrefab, transform.position, Quaternion.identity);
+            if (Random.value < 0.5f)
+            {
+                // 10% total: XP
+                Instantiate(xpPrefab, transform.position, Quaternion.identity);
+            }
+            else
+            {
+                // 10% total: item (money)
+                Instantiate(
+                    moneyPrefab[Random.Range(0, moneyPrefab.Count)],
+                    transform.position,
+                    Quaternion.identity
+                );
+            }
         }
-
-        // Dropar moeda (independente do XP)
-        if (Random.value < coinChance)
-        {
-            int index = Random.Range(0, moneyPrefab.Count);
-            GameObject prefabToSpawn = moneyPrefab[index];
-            Instantiate(prefabToSpawn, transform.position, Quaternion.identity);
-        }
+        // 80% do tempo não dropa nada (40% + 40%)
 
         StartCoroutine(DestroyAfterDelay(0.5f));
     }

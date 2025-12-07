@@ -6,27 +6,35 @@ using TMPro;
 public class ItemRandomScript2 : MonoBehaviour
 {
     [Header("Referências do UI")]
-    public TextMeshProUGUI titleText;
-    public TextMeshProUGUI descriptionText;
-    public Image iconImage;
-
-    [Header("Objetos que serão ativados/upgrade")]
-    public List<GameObject> itemPrefabs;
+    [SerializeField] private TextMeshProUGUI titleText;
+    [SerializeField] private TextMeshProUGUI descriptionText;
+    [SerializeField] private Image iconImage;
+    [SerializeField] private List<GameObject> itemPrefabs;
 
     [Header("Banco de Itens")]
-    public List<string> itemTitles = new List<string>()
+    [Header("Banco de Itens")]
+    [SerializeField]
+    private List<string> itemTitles = new List<string>()
     {
-        "Machado Giratório"
+        "Machado Giratório",
+        //"Amuleto da Serpente Dourada",
+        //"Martelo do Trovão",
+        //"Coroa do Rei Caído",
     };
 
-    public List<string> itemDescriptions = new List<string>()
+    [SerializeField]
+    private List<string> itemDescriptions = new List<string>()
     {
-        "Gera um machado que orbita ao redor do jogador causando dano contínuo."
+        "Gera um machado que orbita ao redor do jogador causando dano contínuo.",
+        //"Aumenta o dano contra inimigos envenenados e aplica veneno ao atacar.",
+        //"Golpes pesados criam ondas de choque que empurram e atordoam inimigos.",
+        //"Aumenta vida máxima em 40% e concede regeneração acelerada em batalha.",
     };
 
-    public List<Sprite> itemSprites = new List<Sprite>();
+    [SerializeField] private List<Sprite> itemSprites = new List<Sprite>();
 
     private int lastIndex = -1;
+
     private GameObject CardUI;
 
     void Awake()
@@ -34,41 +42,74 @@ public class ItemRandomScript2 : MonoBehaviour
         CardUI = GameObject.FindWithTag("CardUI");
     }
 
+    // -----------------------------------------------------------
+    // SORTEAR ITEM E APLICAR NO UI
+    // -----------------------------------------------------------
     public void DrawRandomItem()
     {
-        lastIndex = Random.Range(0, itemTitles.Count);
+        if (itemTitles.Count == 0 ||
+            itemDescriptions.Count == 0 ||
+            itemSprites.Count == 0 ||
+            itemTitles.Count != itemDescriptions.Count ||
+            itemTitles.Count != itemSprites.Count)
+        {
+            Debug.LogError("As listas de itens estão vazias ou com tamanhos diferentes.");
+            return;
+        }
 
-        titleText.text = itemTitles[lastIndex];
-        descriptionText.text = itemDescriptions[lastIndex];
+        int index = Random.Range(0, itemTitles.Count);
+        lastIndex = index;
+
+        string title = itemTitles[lastIndex];
+        bool alreadyOwned = PlayerPrefs.GetInt($"ITEM_{title}", 0) == 1;
+
+        titleText.text = alreadyOwned ? title + " (UPGRADE)" : title;
+        descriptionText.text = alreadyOwned
+            ? GetUpgradeDescription(title)
+            : itemDescriptions[lastIndex];
+
         iconImage.sprite = itemSprites[lastIndex];
-
-        PauseGame();
     }
 
+
+    // -----------------------------------------------------------
+    // ATIVAR OBJETO RELACIONADO AO ITEM
+    // -----------------------------------------------------------
     public void ApplyItemEffect()
     {
-        if (lastIndex < 0) return;
-
-        GameObject obj = itemPrefabs[lastIndex];
-
-        if (obj.activeSelf)
+        if (lastIndex < 0)
         {
-            ApplyUpgrade(itemTitles[lastIndex]);
+            Debug.LogWarning("Nenhum item foi sorteado ainda.");
+            return;
         }
-        else
+
+        string itemName = itemTitles[lastIndex];
+        bool alreadyOwned = PlayerPrefs.GetInt($"ITEM_{itemName}", 0) == 1;
+
+        // Se já tem → chamar upgrade
+        if (alreadyOwned)
         {
-            ActivateItem(itemTitles[lastIndex]);
+            ApplyUpgrade(itemName);
+            CloseCardUI();
+            return;
         }
+
+        // Se ainda não tem → ativar primeira vez
+        PlayerPrefs.SetInt($"ITEM_{itemName}", 1);
+        PlayerPrefs.Save();
+
+        // Tenta achar objeto existente
+        itemPrefabs[lastIndex].SetActive(true);
 
         CloseCardUI();
     }
 
-    private void ActivateItem(string itemName)
+    // -----------------------------------------------------------
+    // DESCRIÇÃO DO UPGRADE
+    // -----------------------------------------------------------
+    private string GetUpgradeDescription(string title)
     {
-        GameObject obj = itemPrefabs[lastIndex];
-        obj.SetActive(true);
-
-        switch (itemName)
+        switch (title)
         {
             case "Varinha Mágica":
                 return "Aumenta o dano da magia.";
@@ -80,12 +121,15 @@ public class ItemRandomScript2 : MonoBehaviour
                 return "Aumenta a duração e dano do efeito das botas.";
                 break;
         }
+
+        return "Upgrade aplicado.";
     }
 
+    // -----------------------------------------------------------
+    // APLICAR UPGRADE DO ITEM
+    // -----------------------------------------------------------
     private void ApplyUpgrade(string itemName)
     {
-        GameObject obj = itemPrefabs[lastIndex];
-
         switch (itemName)
         {
             case "Varinha Mágica":
@@ -100,12 +144,9 @@ public class ItemRandomScript2 : MonoBehaviour
         }
     }
 
-    private void PauseGame()
-    {
-        Time.timeScale = 0f;
-        Physics2D.simulationMode = SimulationMode2D.Script;
-    }
-
+    // -----------------------------------------------------------
+    // FECHAR UI E DESPAUSAR JOGO
+    // -----------------------------------------------------------
     private void CloseCardUI()
     {
 

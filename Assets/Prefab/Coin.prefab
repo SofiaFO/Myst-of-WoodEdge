@@ -211,5 +211,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropMoeda
   pickupSound: {fileID: 8300000, guid: 1d76905675171a946bed5022061718f8, type: 3}
-  minCoin: 3
-  maxCoin: 5
+  baseMinCoin: 1
+  baseMaxCoin: 5
+  levelScaling: 0.5

@@ -4,6 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// Controla os status principais do jogador:
+/// Vida, Ataque, Defesa, XP, Nível e Dinheiro.
+/// Também atualiza a UI (barras e textos) quando necessário.
+/// </summary>
 public class PlayerStats : MonoBehaviour
 {
     [Header("Status Base")]
@@ -30,7 +35,6 @@ public class PlayerStats : MonoBehaviour
     ItemRandomScript1 itemRandom1;
     ItemRandomScript2 itemRandom2;
     ItemRandomScript3 itemRandom3;
-
     GameObject Card1;
     GameObject Card2;
     GameObject Card3;
@@ -46,19 +50,16 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private Text xpText;
     [SerializeField] private Text moneyText;
 
-    public event Action OnDeath;
+    public event Action OnDeath; // para PlayerController reagir quando morrer
 
     public static PlayerStats Instance;
 
     private void Awake()
     {
-        Debug.Log("🟦 [PlayerStats] Awake iniciado.");
-
         CardUI = GameObject.FindWithTag("CardUI");
         Card1 = GameObject.FindWithTag("Card1");
         Card2 = GameObject.FindWithTag("Card2");
         Card3 = GameObject.FindWithTag("Card3");
-
         if (CardUI != null)
             CardUI.SetActive(false);
 
@@ -88,10 +89,14 @@ public class PlayerStats : MonoBehaviour
             PlayerPrefs.SetFloat("PlayerHealth", 100f);
         maxHealth = PlayerPrefs.GetFloat("PlayerHealth");
 
-        if (!PlayerPrefs.HasKey("PlayerDefense")) PlayerPrefs.SetFloat("PlayerDefense", 5f);
+        // Defense
+        if (!PlayerPrefs.HasKey("PlayerDefense"))
+            PlayerPrefs.SetFloat("PlayerDefense", 5f);
         defense = PlayerPrefs.GetFloat("PlayerDefense");
 
-        if (!PlayerPrefs.HasKey("PlayerMoneyMultiplier")) PlayerPrefs.SetFloat("PlayerMoneyMultiplier", 1f);
+        // Money Multiplier
+        if (!PlayerPrefs.HasKey("PlayerMoneyMultiplier"))
+            PlayerPrefs.SetFloat("PlayerMoneyMultiplier", 1f);
         moneyMultiplier = PlayerPrefs.GetFloat("PlayerMoneyMultiplier");
 
         PlayerPrefs.Save();
@@ -134,10 +139,26 @@ public class PlayerStats : MonoBehaviour
         moneyMultiplier = amount;
     }
 
-    public float GetAttack() => attack;
-    public float GetDefense() => defense;
-    public float GetMoneyMultiplier() => moneyMultiplier;
-    public float GetHealth() => maxHealth;
+    // === ATAQUE / DEFESA ===
+    public float GetAttack()
+    {
+        return attack;
+    }
+
+    public float GetDefense()
+    {
+        return defense;
+    }
+
+    public float GetMoneyMultiplier()
+    {
+        return moneyMultiplier;
+    }
+
+    public float GetHealth()
+    {
+        return maxHealth;
+    }
 
     public void IncreaseHealth(float amount)
     {
@@ -184,29 +205,21 @@ public class PlayerStats : MonoBehaviour
 
     private void LevelUp()
     {
-        Debug.Log("🟦 [PlayerStats] Entrou em LevelUp()");
-
         level++;
-
-        // 🔥 XP aumenta exponencialmente a cada nível
-        xpToNextLevel *= xpScalingPerLevel;
-        
-        Debug.Log($"📊 Nível {level} | XP necessário: {xpToNextLevel:F0} (x{xpScalingPerLevel})");
-        
+        xpToNextLevel *= 1.25f; // aumenta XP necessária a cada nível
         _xpBar.levelUp(xpToNextLevel);
         maxHealth += 10f;
         attack += 2f;
         defense += 1f;
         Time.timeScale = 0f;
-
-        // Pega scripts dos cards
-        itemRandom1 = Card1?.GetComponent<ItemRandomScript1>();
-        itemRandom2 = Card2?.GetComponent<ItemRandomScript2>();
-        itemRandom3 = Card3?.GetComponent<ItemRandomScript3>();
-
-        itemRandom1?.DrawRandomItem();
-        itemRandom2?.DrawRandomItem();
-        itemRandom3?.DrawRandomItem();
+        Physics2D.simulationMode = SimulationMode2D.Script;
+        CardUI.SetActive(true);
+        itemRandom1 = Card1.GetComponent<ItemRandomScript1>();
+        itemRandom2 = Card2.GetComponent<ItemRandomScript2>();
+        itemRandom3 = Card3.GetComponent<ItemRandomScript3>();
+        itemRandom1.DrawRandomItem();
+        itemRandom2.DrawRandomItem();
+        itemRandom3.DrawRandomItem();
 
         Debug.Log($"Subiu para o nível {level}!");
     }
@@ -214,7 +227,7 @@ public class PlayerStats : MonoBehaviour
     // === SISTEMA DE CÂMERA E DESATIVAÇÃO DE OBJETOS ===
     public void StartCameraTransition()
     {
-        if(level < 11)
+        if (level < 11)
             StartCoroutine(CameraTransitionSequence());
         else
             UnpauseGame();
@@ -346,7 +359,7 @@ public class PlayerStats : MonoBehaviour
             activeChildren[randomIndex].SetActive(false);
             activeChildren.RemoveAt(randomIndex);
             AudioSource.PlayClipAtPoint(bossClip, transform.position);
-            if(level == 10)
+            if (level == 10)
             {
                 AudioSource.PlayClipAtPoint(battleClip, transform.position);
             }
@@ -398,16 +411,7 @@ public class PlayerStats : MonoBehaviour
             moneyText.text = $"$ {money}";
     }
 
-    // === FUNÇÃO PARA DESPAUSAR APÓS ESCOLHER UMA CARTA ===
-    public void EscolheuCarta()
-    {
-        if (CardUI != null)
-            CardUI.SetActive(false);
-
-        Time.timeScale = 1f;
-    }
-
-    // getters
+    // getters simples para outros scripts
     public float CurrentHealth => currentHealth;
     public float MaxHealth => maxHealth;
     public float defenseValue => defense;

@@ -19,6 +19,12 @@ public class FireballProjectile : MonoBehaviour
                 e.TakeDamage(damage);
 
             Destroy(gameObject);
+        }else if (col.CompareTag("Boss"))
+        {
+            Boss b = col.GetComponent<Boss>();
+            if (b != null)
+                b.TakeDamage(damage);
+            Destroy(gameObject);
         }
     }
 }

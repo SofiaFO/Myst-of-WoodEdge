@@ -53,18 +53,26 @@ public class FireballShooter : MonoBehaviour
     Transform GetClosestEnemy()
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        GameObject[] bosses = GameObject.FindGameObjectsWithTag("Boss");
+
         Transform closest = null;
         float minDist = Mathf.Infinity;
 
-        foreach (GameObject enemy in enemies)
+        void CheckClosest(GameObject obj)
         {
-            float dist = Vector2.Distance(transform.position, enemy.transform.position);
+            float dist = Vector2.Distance(transform.position, obj.transform.position);
             if (dist < minDist && dist <= range)
             {
                 minDist = dist;
-                closest = enemy.transform;
+                closest = obj.transform;
             }
         }
+
+        foreach (GameObject enemy in enemies)
+            CheckClosest(enemy);
+
+        foreach (GameObject boss in bosses)
+            CheckClosest(boss);
 
         return closest;
     }

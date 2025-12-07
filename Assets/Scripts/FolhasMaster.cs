@@ -21,13 +21,9 @@ public class FolhasMaster : MonoBehaviour
     {
         if (player == null)
             player = GameObject.FindWithTag("Player").transform;
-    }
-
-    public void Activate()
-    {
-        gameObject.SetActive(true);
         SpawnLeaves();
     }
+
 
     public void SpawnLeaves()
     {

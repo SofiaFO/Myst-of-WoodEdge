@@ -19,6 +19,12 @@ public class LeafProjectile : MonoBehaviour
                 enemy.TakeDamage(damage);
 
             Destroy(gameObject);
+        }else if (col.CompareTag("Boss"))
+        {
+            Boss boss = col.GetComponent<Boss>();
+            if (boss != null)
+                boss.TakeDamage(damage);
+            Destroy(gameObject);
         }
     }
 }

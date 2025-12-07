@@ -17,18 +17,24 @@ public class ItemRandomScript3 : MonoBehaviour
     private List<string> itemTitles = new List<string>()
     {
         "Machado Giratório",
-        "Cajado Solar"
+        "Cajado Solar",
+        //"Adaga Sombria",
+        //"Escudo de Pedra Rúnica",
     };
 
-    public List<string> itemDescriptions = new List<string>()
+    [SerializeField]
+    private List<string> itemDescriptions = new List<string>()
     {
         "Gera um machado que orbita ao redor do jogador causando dano contínuo.",
-        "Projéteis de luz causam dano aumentado e queimam inimigos atingidos."
+        "Projetos de luz causam dano aumentado e queimam inimigos atingidos.",
+        //"Aumenta muito a chance de crítico e permite ataques pelas costas mais fortes.",
+        //"Reduz dano recebido em 25% e gera um pequeno escudo a cada 10 segundos.",
     };
 
-    public List<Sprite> itemSprites = new List<Sprite>();
+    [SerializeField] private List<Sprite> itemSprites = new List<Sprite>();
 
     private int lastIndex = -1;
+
     private GameObject CardUI;
 
     void Awake()
@@ -47,24 +53,51 @@ public class ItemRandomScript3 : MonoBehaviour
     // -----------------------------------------------------------
     public void DrawRandomItem()
     {
-        lastIndex = Random.Range(0, itemTitles.Count);
+        if (itemTitles.Count == 0 ||
+            itemDescriptions.Count == 0 ||
+            itemSprites.Count == 0 ||
+            itemTitles.Count != itemDescriptions.Count ||
+            itemTitles.Count != itemSprites.Count)
+        {
+            Debug.LogError("As listas de itens estão vazias ou com tamanhos diferentes.");
+            return;
+        }
 
-        titleText.text = itemTitles[lastIndex];
-        descriptionText.text = itemDescriptions[lastIndex];
+        int index = Random.Range(0, itemTitles.Count);
+        lastIndex = index;
+
+        string title = itemTitles[lastIndex];
+        bool alreadyOwned = PlayerPrefs.GetInt($"ITEM_{title}", 0) == 1;
+
+        titleText.text = alreadyOwned ? title + " (UPGRADE)" : title;
+        descriptionText.text = alreadyOwned
+            ? GetUpgradeDescription(title)
+            : itemDescriptions[lastIndex];
+
         iconImage.sprite = itemSprites[lastIndex];
-
-        PauseGame();
     }
 
+
+    // -----------------------------------------------------------
+    // ATIVAR OBJETO RELACIONADO AO ITEM
+    // -----------------------------------------------------------
     public void ApplyItemEffect()
     {
-        if (lastIndex < 0) return;
-
-        GameObject obj = itemPrefabs[lastIndex];
-
-        if (obj.activeSelf)
+        if (lastIndex < 0)
         {
-            ApplyUpgrade(itemTitles[lastIndex]);
+            Debug.LogWarning("Nenhum item foi sorteado ainda.");
+            return;
+        }
+
+        string itemName = itemTitles[lastIndex];
+        bool alreadyOwned = PlayerPrefs.GetInt($"ITEM_{itemName}", 0) == 1;
+
+        // Se já tem → chamar upgrade
+        if (alreadyOwned)
+        {
+            ApplyUpgrade(itemName);
+            CloseCardUI();
+            return;
         }
 
         // Se ainda não tem → ativar primeira vez
@@ -76,29 +109,33 @@ public class ItemRandomScript3 : MonoBehaviour
         CloseCardUI();
     }
 
-    private void ActivateItem(string itemName)
+    // -----------------------------------------------------------
+    // DESCRIÇÃO DO UPGRADE
+    // -----------------------------------------------------------
+    private string GetUpgradeDescription(string title)
     {
-        GameObject obj = itemPrefabs[lastIndex];
-        obj.SetActive(true);
-
-        switch (itemName)
+        switch (title)
         {
-            case "Machado Giratório":
-                break;
-
-            case "Cajado Solar":
-                break;
+            case "Poção de Cura":
+                return "Frasco curativo que cura metade da vida do usuário";
+            case "Armadura Medieval":
+                return "Lendária armadura, confere ao usuário mais resistência contra todas as fontes";
+            case "Chapéu mágico":
+                return "Chapéu encantado que aumenta o poder dos ataques mágicos do usuário";
         }
+
+        return "Upgrade aplicado.";
     }
 
+    // -----------------------------------------------------------
+    // APLICAR UPGRADE DO ITEM
+    // -----------------------------------------------------------
     private void ApplyUpgrade(string itemName)
     {
-        GameObject obj = itemPrefabs[lastIndex];
-
         switch (itemName)
         {
             case "Poção de Cura":
-                playerStats.Heal(playerStats.GetHealth()/2);
+                playerStats.Heal(playerStats.GetHealth() / 2);
                 break;
             case "Armadura Medieval":
                 playerStats.IncreaseDefense(4);
@@ -109,12 +146,9 @@ public class ItemRandomScript3 : MonoBehaviour
         }
     }
 
-    private void PauseGame()
-    {
-        Time.timeScale = 0f;
-        Physics2D.simulationMode = SimulationMode2D.Script;
-    }
-
+    // -----------------------------------------------------------
+    // FECHAR UI E DESPAUSAR JOGO
+    // -----------------------------------------------------------
     private void CloseCardUI()
     {
 

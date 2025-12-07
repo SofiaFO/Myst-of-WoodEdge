@@ -14,6 +14,16 @@ public class LeafOrbit : MonoBehaviour
     private float timer;
     private bool spinning = true;
 
+    void Awake()
+    {
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+                player = playerObj.transform;
+        }
+    }
+
     void Start()
     {
         timer = spinDuration;

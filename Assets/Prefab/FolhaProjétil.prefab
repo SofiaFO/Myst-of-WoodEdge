@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1848491597945903343}
   - component: {fileID: 3481510479991524467}
   - component: {fileID: 5871733751470290716}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: "FolhaProj\xE9til"
   m_TagString: Untagged
   m_Icon: {fileID: 0}

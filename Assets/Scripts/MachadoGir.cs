@@ -78,6 +78,12 @@ public class MachadoGir : MonoBehaviour
             if (enemy != null)
                 enemy.TakeDamage(damage);
         }
+        else if (other.CompareTag("Boss"))
+        {
+            Boss boss = other.GetComponent<Boss>();
+            if (boss != null)
+                boss.TakeDamage(damage);
+        }
     }
 
     public void Upgrade()

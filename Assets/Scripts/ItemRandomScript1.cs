@@ -83,8 +83,7 @@ public class ItemRandomScript1 : MonoBehaviour
             case "Machado Giratório":
                 break;
 
-            case "Folhas Giratórias":
-                obj.GetComponent<FolhasMaster>().Activate();
+            case "Folhas Mágicas":
                 break;
 
             case "Bola de Fogo":
@@ -102,7 +101,7 @@ public class ItemRandomScript1 : MonoBehaviour
                 obj.GetComponent<MachadoGir>().Upgrade();
                 break;
 
-            case "Folhas Giratórias":
+            case "Folhas Mágicas":
                 obj.GetComponent<FolhasMaster>().Upgrade();
                 break;
 
