@@ -12,7 +12,11 @@ public class EnemySpawner : MonoBehaviour
     [Header("Spawn Settings")]
     public int initialMaxEnemies = 20; // 🔥 Era 10, agora 20
     public float initialSpawnInterval = 1.5f; // 🔥 Era 2f, agora 1.5f
-    
+
+    [Header("Despawn Settings")]
+    public float despawnDistanceX = 13f;
+    public float despawnDistanceY = 13f;
+
     [Header("Progressão Temporal")]
     [Tooltip("A cada quantos segundos a dificuldade aumenta")]
     public float difficultyIncreaseInterval = 30f;
@@ -239,18 +243,34 @@ public class EnemySpawner : MonoBehaviour
         return spawnPos;
     }
 
-    // ================================
-    // CLEANUP SISTEMA ✅
-    // ================================
-    // Remove apenas inimigos que já foram destruídos (null)
     void Cleanup()
     {
+        if (player == null) return;
+
         for (int i = enemies.Count - 1; i >= 0; i--)
         {
-            if (enemies[i] == null)
+            GameObject e = enemies[i];
+
+            // Remove se já foi destruído
+            if (e == null)
             {
+                enemies.RemoveAt(i);
+                continue;
+            }
+
+            // Despawn por distância do player
+            Vector3 enemyPos = e.transform.position;
+            Vector3 playerPos = player.position;
+
+            float dx = Mathf.Abs(enemyPos.x - playerPos.x);
+            float dy = Mathf.Abs(enemyPos.y - playerPos.y);
+
+            if (dx > despawnDistanceX || dy > despawnDistanceY)
+            {
+                Destroy(e);
                 enemies.RemoveAt(i);
             }
         }
     }
+
 }

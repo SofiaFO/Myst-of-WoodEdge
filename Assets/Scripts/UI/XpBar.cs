@@ -26,7 +26,6 @@ public class XpBar : MonoBehaviour
 
     public void increaseXP(float xp)
     {
-        print("increase");
         _xpBar.value += xp;
     }
 
@@ -40,6 +39,5 @@ public class XpBar : MonoBehaviour
     {
         _xpBar.maxValue = _playerStats.xpToNextLevelValue;
         _xpBar.value = _playerStats.CurrentXP;
-        print("setou");
     }
 }

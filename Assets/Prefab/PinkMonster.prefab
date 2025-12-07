@@ -261,6 +261,56 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &1847896316094296454
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2398306614131515479}
+  - component: {fileID: 1480775311318468570}
+  m_Layer: 6
+  m_Name: FlamePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2398306614131515479
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1847896316094296454}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.114, y: -0.147, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 442104349367341057}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1480775311318468570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1847896316094296454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f00d76467c06bb640a0c1678fc3e2a78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AreaSpawner
+  prefabToSpawn: {fileID: 1403200631637432909, guid: 32549f728a8034643a57260012b0d571, type: 3}
+  spawnPoint: {fileID: 2398306614131515479}
+  spawnInterval: 0.3
+  spawnDuration: 5
+  damage: 15
+  inactiveDuration: 5
 --- !u!1 &2049676724658605990
 GameObject:
   m_ObjectHideFlags: 0
@@ -355,6 +405,7 @@ MonoBehaviour:
   attackPrefab1: {fileID: 40895040944107265, guid: f202b9e6df3a878488c8962c78157c93, type: 3}
   attackPrefab2: {fileID: 40895040944107265, guid: eb36fa53fa6b6ed458ad9ce78006b44c, type: 3}
   deathClip: {fileID: 8300000, guid: c41d83665a76e5f4abbc5e43eda2f494, type: 3}
+  upgrade: 0
   attackRate: 1
   attackDamage: 20
   enemyLayer:
@@ -440,6 +491,14 @@ MonoBehaviour:
   xpToNextLevel: 100
   money: 0
   moneyMultiplier: 1
+  bossClip: {fileID: 8300000, guid: 2b60b0c83b7e9eb41a64708e21268b1f, type: 3}
+  battleClip: {fileID: 8300000, guid: 8492cac26e70bc54cb6cf522976d9353, type: 3}
+  mainCamera: {fileID: 0}
+  cinemachineVirtualCamera: {fileID: 0}
+  targetCameraPosition: {x: -0.34, y: 5.04, z: -10}
+  cameraTransitionDuration: 1.5
+  objectsParent: {fileID: 0}
+  objectsToDisable: 2
   healthBar: {fileID: 6091444554244616274}
   levelText: {fileID: 0}
   xpText: {fileID: 0}
@@ -530,7 +589,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79d2ce78a8227a244be065d2f73ea8b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ToroidalObject
-  teleportMargin: 0.2
+  teleportMargin: 1
+--- !u!1 &3827447412780615688
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6454465898052264694}
+  - component: {fileID: 2817101249797931210}
+  m_Layer: 0
+  m_Name: LaserPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6454465898052264694
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3827447412780615688}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.638, y: -0.049, z: 0}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 442104349367341057}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2817101249797931210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3827447412780615688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1670e7ec73ddfd44936ac0f287ab35d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LaserSpawner
+  laserPrefab: {fileID: 4779053372167592158, guid: b32e6eebe765edb4cba66f266490b11a, type: 3}
+  damage: 30
+  spawnInterval: 5
 --- !u!1 &4160069220121758628
 GameObject:
   m_ObjectHideFlags: 0
@@ -681,8 +787,63 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5199134363865594421}
+  - {fileID: 3047743932275939052}
+  - {fileID: 2398306614131515479}
+  - {fileID: 6454465898052264694}
+  - {fileID: 6131407868143222016}
   m_Father: {fileID: 2696001079549916242}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6103561748349146324
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3047743932275939052}
+  - component: {fileID: 342662173560746198}
+  m_Layer: 6
+  m_Name: StarSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3047743932275939052
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6103561748349146324}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.622, y: 0.115, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 442104349367341057}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &342662173560746198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6103561748349146324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa55d3c785674764d95ed7ce9f924bed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StarSpawner
+  prefabToSpawn: {fileID: 1398821032097717591, guid: 3044e61c1431f124299dce3a5a1402d6, type: 3}
+  spawnCount: 3
+  spawnRadius: 2
+  damage: 5
+  starClip: {fileID: 8300000, guid: 4971f5a35d56b2e4ead5f93a9f36ad19, type: 3}
+  spawnDelay: 0.2
+  inactiveDuration: 5
 --- !u!1 &6364659733855979116
 GameObject:
   m_ObjectHideFlags: 0
@@ -973,3 +1134,52 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &8478650293666446164
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6131407868143222016}
+  - component: {fileID: 6162114703145176595}
+  m_Layer: 6
+  m_Name: FireballPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6131407868143222016
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8478650293666446164}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 442104349367341057}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6162114703145176595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8478650293666446164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c2165d78f5b10e44b682ab387f1f962, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FireballShooter
+  player: {fileID: 2696001079549916242}
+  fireballPrefab: {fileID: 2383247680277727976, guid: bcdb535d75a3bcf42977a10023d8c564, type: 3}
+  shootInterval: 1.5
+  projectileSpeed: 7
+  range: 10

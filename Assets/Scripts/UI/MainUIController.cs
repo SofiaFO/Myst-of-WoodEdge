@@ -6,6 +6,12 @@ namespace UI
 {
     public class MainUIController : MonoBehaviour
     {
+        public void MainMenu()
+        {
+            Debug.Log("[MainUIController] MainMenu() chamado!");
+            SceneManager.LoadScene("MainMenu");
+        }
+
         public void StartGame()
         {
             Debug.Log("[MainUIController] StartGame() chamado!");

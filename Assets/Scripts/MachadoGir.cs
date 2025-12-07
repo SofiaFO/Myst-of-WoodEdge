@@ -19,7 +19,6 @@ public class MachadoGir : MonoBehaviour
     private void Awake()
     {
         player = GameObject.FindWithTag("Player").transform;
-        gameObject.SetActive(false);
     }
 
     private void Start()

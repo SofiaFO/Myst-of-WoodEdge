@@ -32,13 +32,6 @@ public class ToroidalLargeMapGenerator : MonoBehaviour
         torusMap.halfWidth = totalWidth / 2f;
         torusMap.halfHeight = totalHeight / 2f;
 
-        // 🟦 PRINTA OS LIMITES DO MAPA
-        Debug.Log("===== LIMITES DO MAPA TOROIDAL =====");
-        Debug.Log($"Min X = {-torusMap.halfWidth}");
-        Debug.Log($"Max X = { torusMap.halfWidth}");
-        Debug.Log($"Min Y = {-torusMap.halfHeight}");
-        Debug.Log($"Max Y = { torusMap.halfHeight}");
-        Debug.Log("====================================");
 
         Vector3 origin = new Vector3(
             -totalWidth / 2f + singleMapWidth / 2f,
@@ -61,8 +54,6 @@ public class ToroidalLargeMapGenerator : MonoBehaviour
                 Instantiate(prefab, pos, Quaternion.identity, transform);
             }
         }
-
-        Debug.Log("🟢 Mapão toroidal criado com sucesso!");
     }
 
     private GameObject GetRandomMapPrefab()

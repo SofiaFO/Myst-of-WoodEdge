@@ -4,11 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-/// <summary>
-/// Controla os status principais do jogador:
-/// Vida, Ataque, Defesa, XP, Nível e Dinheiro.
-/// Também atualiza a UI (barras e textos) quando necessário.
-/// </summary>
 public class PlayerStats : MonoBehaviour
 {
     [Header("Status Base")]
@@ -50,8 +45,6 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private Text xpText;
     [SerializeField] private Text moneyText;
 
-    public event Action OnDeath; // para PlayerController reagir quando morrer
-
     public static PlayerStats Instance;
 
     private void Awake()
@@ -63,17 +56,19 @@ public class PlayerStats : MonoBehaviour
         if (CardUI != null)
             CardUI.SetActive(false);
 
-        PlayerStats[] players = FindObjectsOfType<PlayerStats>();
-        if (players.Length > 1)
-            // Singleton seguro
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
+        // ===== SINGLETON MAIS SEGURO =====
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogWarning($"[PlayerStats] JÁ EXISTE Instance! Destruindo {gameObject.name}");
+            Destroy(gameObject);
+            return;
+        }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        // ===== REMOVIDO: DontDestroyOnLoad(gameObject); =====
+        // O PinkMonster (pai) já usa DontDestroyOnLoad, então este persiste automaticamente!
+
+        Debug.Log($"[PlayerStats] Instance criada: {gameObject.name}");
 
         _xpBar = FindObjectOfType<XpBar>();
 
@@ -98,6 +93,13 @@ public class PlayerStats : MonoBehaviour
         if (!PlayerPrefs.HasKey("PlayerMoneyMultiplier"))
             PlayerPrefs.SetFloat("PlayerMoneyMultiplier", 1f);
         moneyMultiplier = PlayerPrefs.GetFloat("PlayerMoneyMultiplier");
+
+        if(!PlayerPrefs.HasKey("PlayerAttack"))
+            PlayerPrefs.SetFloat("PlayerAttack", 20f);
+        attack = PlayerPrefs.GetFloat("PlayerAttack");
+
+        if (PlayerPrefs.HasKey("PlayerMoney"))
+            money = PlayerPrefs.GetInt("PlayerMoney", 0);
 
         PlayerPrefs.Save();
     }
@@ -158,6 +160,11 @@ public class PlayerStats : MonoBehaviour
     public float GetHealth()
     {
         return maxHealth;
+    }
+
+    public float GetMoney()
+    {
+        return money;
     }
 
     public void IncreaseHealth(float amount)
@@ -374,10 +381,10 @@ public class PlayerStats : MonoBehaviour
         Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
     }
 
-    // === DINHEIRO ===
     public void AddMoney(int amount)
     {
         money += amount;
+        SaveMoney(); // ← SALVA!
         UpdateUI();
     }
 
@@ -386,10 +393,18 @@ public class PlayerStats : MonoBehaviour
         if (money >= amount)
         {
             money -= amount;
+            SaveMoney(); // ← SALVA!
             UpdateUI();
             return true;
         }
         return false;
+    }
+
+    // ===== NOVO: Salvar dinheiro =====
+    private void SaveMoney()
+    {
+        PlayerPrefs.SetInt("PlayerMoney", money);
+        PlayerPrefs.Save();
     }
 
     // === UI ===

@@ -119,57 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &131437225
+--- !u!1 &131437225 stripped
 GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 6103561748349146324, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
+  m_PrefabInstance: {fileID: 1189118904}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 131437226}
-  - component: {fileID: 131437227}
-  m_Layer: 6
-  m_Name: StarSpawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &131437226
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 131437225}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.622, y: 0.115, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1711561164}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &131437227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 131437225}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa55d3c785674764d95ed7ce9f924bed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StarSpawner
-  prefabToSpawn: {fileID: 1398821032097717591, guid: 3044e61c1431f124299dce3a5a1402d6, type: 3}
-  spawnCount: 3
-  spawnRadius: 2
-  damage: 5
-  starClip: {fileID: 8300000, guid: 4971f5a35d56b2e4ead5f93a9f36ad19, type: 3}
-  spawnDelay: 0.2
-  inactiveDuration: 5
 --- !u!1 &183607971
 GameObject:
   m_ObjectHideFlags: 0
@@ -2703,56 +2657,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8995201653130792134, guid: 3b76e7c20aa37b240b9dac206942ad83, type: 3}
   m_PrefabInstance: {fileID: 3600900491462872407}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1187966097
+--- !u!1 &1187966097 stripped
 GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 1847896316094296454, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
+  m_PrefabInstance: {fileID: 1189118904}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1187966098}
-  - component: {fileID: 1187966099}
-  m_Layer: 6
-  m_Name: FlamePoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1187966098
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1187966097}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.114, y: -0.147, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1711561164}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1187966099
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1187966097}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f00d76467c06bb640a0c1678fc3e2a78, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AreaSpawner
-  prefabToSpawn: {fileID: 1403200631637432909, guid: 32549f728a8034643a57260012b0d571, type: 3}
-  spawnPoint: {fileID: 1187966098}
-  spawnInterval: 0.3
-  spawnDuration: 5
-  damage: 15
-  inactiveDuration: 5
 --- !u!1001 &1189118904
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2761,9 +2670,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 227411907374670513, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
-      propertyPath: teleportMargin
-      value: 1
+    - target: {fileID: 100575385993496570, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 584608209510430275, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2818,21 +2727,9 @@ PrefabInstance:
       value: PinkMonster
       objectReference: {fileID: 0}
     - target: {fileID: 6171051653344566175, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
-      propertyPath: level
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6171051653344566175, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
-      propertyPath: bossClip
-      value: 
-      objectReference: {fileID: 8300000, guid: 2b60b0c83b7e9eb41a64708e21268b1f, type: 3}
-    - target: {fileID: 6171051653344566175, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
       propertyPath: levelText
       value: 
       objectReference: {fileID: 965985950}
-    - target: {fileID: 6171051653344566175, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
-      propertyPath: battleClip
-      value: 
-      objectReference: {fileID: 8300000, guid: 8492cac26e70bc54cb6cf522976d9353, type: 3}
     - target: {fileID: 6171051653344566175, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
       propertyPath: mainCamera
       value: 
@@ -2847,19 +2744,7 @@ PrefabInstance:
       objectReference: {fileID: 1931948976}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 442104349367341057, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 131437226}
-    - targetCorrespondingSourceObject: {fileID: 442104349367341057, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1187966098}
-    - targetCorrespondingSourceObject: {fileID: 442104349367341057, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1513316743}
-    - targetCorrespondingSourceObject: {fileID: 442104349367341057, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1253958965}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
 --- !u!114 &1222592936 stripped
@@ -2944,55 +2829,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Moedas
   scoreText: {fileID: 1222592936}
---- !u!1 &1253958964
+--- !u!1 &1253958964 stripped
 GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 8478650293666446164, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
+  m_PrefabInstance: {fileID: 1189118904}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1253958965}
-  - component: {fileID: 1253958966}
-  m_Layer: 6
-  m_Name: FireballPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1253958965
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1253958964}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1711561164}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1253958966
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1253958964}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c2165d78f5b10e44b682ab387f1f962, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FireballShooter
-  player: {fileID: 292399576}
-  fireballPrefab: {fileID: 2383247680277727976, guid: bcdb535d75a3bcf42977a10023d8c564, type: 3}
-  shootInterval: 1.5
-  projectileSpeed: 7
-  range: 10
 --- !u!1 &1327780631
 GameObject:
   m_ObjectHideFlags: 0
@@ -3129,53 +2970,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1327780631}
   m_CullTransparentMesh: 1
---- !u!1 &1513316742
+--- !u!1 &1513316742 stripped
 GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 3827447412780615688, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
+  m_PrefabInstance: {fileID: 1189118904}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1513316743}
-  - component: {fileID: 1513316744}
-  m_Layer: 0
-  m_Name: LaserPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1513316743
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1513316742}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.638, y: -0.049, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1711561164}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1513316744
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1513316742}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1670e7ec73ddfd44936ac0f287ab35d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LaserSpawner
-  laserPrefab: {fileID: 4779053372167592158, guid: b32e6eebe765edb4cba66f266490b11a, type: 3}
-  damage: 30
-  spawnInterval: 5
 --- !u!1 &1530497013
 GameObject:
   m_ObjectHideFlags: 0
@@ -3901,11 +3700,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!4 &1711561164 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 442104349367341057, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
-  m_PrefabInstance: {fileID: 1189118904}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1777107452 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100575385993496570, guid: a178a0f0570593c4b86a90407bb2038b, type: 3}
@@ -4175,6 +3969,8 @@ MonoBehaviour:
   - {fileID: 730835691878994017, guid: f746c691df4652e499dfa1773d38fb96, type: 3}
   initialMaxEnemies: 10
   initialSpawnInterval: 2
+  despawnDistanceX: 13
+  despawnDistanceY: 13
   difficultyIncreaseInterval: 30
   additionalEnemiesPerInterval: 5
   spawnIntervalReduction: 0.05

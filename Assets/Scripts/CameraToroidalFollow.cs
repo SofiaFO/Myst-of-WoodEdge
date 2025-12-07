@@ -36,22 +36,6 @@ public class CameraToroidalFollow : MonoBehaviour
         var cam = Camera.main;
         camHeight = cam.orthographicSize;
         camWidth = camHeight * cam.aspect;
-        
-        Debug.Log("===== LIMITES DO MAPA TOROIDAL =====");
-        Debug.Log($"Min X = {-map.halfWidth}");
-        Debug.Log($"Max X = {map.halfWidth}");
-        Debug.Log($"Min Y = {-map.halfHeight}");
-        Debug.Log($"Max Y = {map.halfHeight}");
-        Debug.Log("===== CONFIGURAÇÃO DA CÂMERA =====");
-        Debug.Log($"Orthographic Size: {cam.orthographicSize}");
-        Debug.Log($"Aspect Ratio: {cam.aspect}");
-        Debug.Log($"Camera Width: {camWidth}");
-        Debug.Log($"Camera Height: {camHeight}");
-        Debug.Log("===== LIMITES CALCULADOS =====");
-        Debug.Log($"Min X Câmera (Esquerda): {-map.halfWidth + camWidth + edgeOffsetLeft}");
-        Debug.Log($"Max X Câmera (Direita): {map.halfWidth - camWidth - edgeOffsetRight}");
-        Debug.Log($"Min Y Câmera (Baixo): {-map.halfHeight + camHeight + edgeOffsetBottom}");
-        Debug.Log($"Max Y Câmera (Cima): {map.halfHeight - camHeight - edgeOffsetTop}");
     }
 
     void LateUpdate()

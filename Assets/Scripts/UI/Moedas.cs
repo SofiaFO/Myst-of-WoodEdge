@@ -1,23 +1,39 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Moedas : MonoBehaviour
 {
-    [SerializeField] private TMP_Text scoreText; // ou TMP_Text se usar TextMeshPro
+    [SerializeField] private TMP_Text scoreText;
 
     private PlayerStats _playerStats;
 
     void Awake()
     {
-
         _playerStats = FindObjectOfType<PlayerStats>();
+
         if (_playerStats == null)
-            Debug.LogError(" Nenhum PlayerStats encontrado na cena!");
+            Debug.LogError("Nenhum PlayerStats encontrado na cena!");
     }
 
     void Update()
     {
-        scoreText.text = _playerStats.Money.ToString();
+        // Proteção contra referência nula
+        if (scoreText == null)
+            return;
+
+        // Se não existir PlayerStats, mostra 0
+        if (_playerStats == null)
+        {
+            scoreText.text = "0";
+            return;
+        }
+
+        // Garante que nunca fique vazio
+        int money = _playerStats.Money;
+
+        if (money < 0)
+            money = 0;
+
+        scoreText.text = money.ToString();
     }
 }
